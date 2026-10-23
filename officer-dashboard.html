@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Municipal Officer Dashboard — SafeCity AI</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="brand">
+        <div class="brand-icon" style="background: linear-gradient(135deg, #0d9488, #3b82f6);"><i class="fa-solid fa-user-shield"></i></div>
+        <span>SafeCity <span style="color: var(--accent-cyan);">Officer</span></span>
+        <span class="brand-badge" style="background: rgba(13, 148, 136, 0.2); border-color: var(--accent-teal);">Municipal Portal</span>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="officer-dashboard.html" class="nav-link active"><i class="fa-solid fa-table-columns"></i> Console</a></li>
+        <li><a href="heatmap.html" class="nav-link"><i class="fa-solid fa-map"></i> City Heatmap</a></li>
+        <li><a href="route.html" class="nav-link"><i class="fa-solid fa-route"></i> SafeRoute</a></li>
+        <li><a href="places.html" class="nav-link"><i class="fa-solid fa-hospital"></i> Safe Places</a></li>
+        <li><a href="track.html" class="nav-link"><i class="fa-solid fa-magnifying-glass"></i> Track ID</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <div id="nav-auth-container"></div>
+        <button class="mobile-menu-btn" aria-label="Toggle navigation"><i class="fa-solid fa-bars"></i></button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Officer Workspace -->
+  <main class="main-content">
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem;">
+      <div>
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+          <span class="badge badge-progress"><i class="fa-solid fa-building-columns"></i> Municipal Engineering Division</span>
+        </div>
+        <h1 class="page-title"><i class="fa-solid fa-screwdriver-wrench" style="color: var(--accent-cyan);"></i> Civic Operations & Triage Console</h1>
+        <p class="page-subtitle">Inspect reported civic hazards, upload verified repair evidence, and dynamically update corridor safety scores</p>
+      </div>
+      <div style="display: flex; gap: 0.75rem;">
+        <button onclick="loadOfficerStats(); loadOfficerComplaints();" class="btn btn-secondary btn-sm">
+          <i class="fa-solid fa-arrows-rotate"></i> Refresh Data
+        </button>
+        <a href="report.html" class="btn btn-outline btn-sm">
+          <i class="fa-solid fa-plus"></i> Log Field Ticket
+        </a>
+      </div>
+    </div>
+
+    <!-- Key Metrics Grid -->
+    <div class="grid-4" style="margin-bottom: 2rem;">
+      <div class="stat-card">
+        <div class="stat-icon cyan"><i class="fa-solid fa-list-check"></i></div>
+        <div>
+          <div class="stat-value" id="stat-total">0</div>
+          <div class="stat-label">Total Complaints</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon yellow"><i class="fa-solid fa-clock"></i></div>
+        <div>
+          <div class="stat-value" id="stat-pending">0</div>
+          <div class="stat-label">Pending Verification</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon cyan"><i class="fa-solid fa-person-digging"></i></div>
+        <div>
+          <div class="stat-value" id="stat-progress">0</div>
+          <div class="stat-label">Repairs In Progress</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon green"><i class="fa-solid fa-circle-check"></i></div>
+        <div>
+          <div class="stat-value" id="stat-fixed">0</div>
+          <div class="stat-label">Fixed & Verified</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Secondary Metrics & Chart Row -->
+    <div class="grid-2" style="margin-bottom: 2.5rem;">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title"><i class="fa-solid fa-chart-pie" style="color: var(--accent-cyan);"></i> Category-Wise Issue Distribution</h3>
+        </div>
+        <div style="height: 240px; position: relative;">
+          <canvas id="category-chart"></canvas>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title"><i class="fa-solid fa-tachometer-alt" style="color: var(--accent-cyan);"></i> Resolution Efficiency & Hazard Index</h3>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 1.5rem; justify-content: center; height: 240px;">
+          <div>
+            <div style="display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 0.4rem;">
+              <span>Overall Resolution Rate</span>
+              <strong id="stat-resolution-rate" style="color: var(--color-safe);">0%</strong>
+            </div>
+            <div style="height: 8px; background: var(--bg-surface); border-radius: var(--radius-full); overflow: hidden; border: 1px solid var(--border-color);">
+              <div style="width: 33%; height: 100%; background: linear-gradient(90deg, var(--accent-cyan), var(--color-safe));"></div>
+            </div>
+          </div>
+
+          <div style="background: var(--bg-surface); padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <div style="font-size: 0.8rem; color: var(--text-muted);">High / Critical Severity Defects</div>
+              <div style="font-size: 1.4rem; font-weight: 800; color: var(--color-danger);" id="stat-high-sev">0</div>
+            </div>
+            <span class="badge badge-critical"><i class="fa-solid fa-fire"></i> Expedited Dispatch</span>
+          </div>
+
+          <div style="font-size: 0.8rem; color: var(--text-muted);">
+            <i class="fa-solid fa-circle-info"></i> All changes trigger audit logs in compliance with municipal accountability standards.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Interactive Officer Map -->
+    <div class="card" style="margin-bottom: 2.5rem;">
+      <div class="card-header">
+        <h3 class="card-title"><i class="fa-solid fa-map-location" style="color: var(--accent-cyan);"></i> Geographic Dispatch Map</h3>
+        <span class="form-hint">Click any complaint marker to open inspection details</span>
+      </div>
+      <div class="map-wrapper">
+        <div id="officer-map" class="map-element" style="height: 380px;"></div>
+      </div>
+    </div>
+
+    <!-- Complaints Management Table & Filters -->
+    <div class="card">
+      <div class="card-header" style="flex-wrap: wrap; gap: 1rem;">
+        <h3 class="card-title"><i class="fa-solid fa-table-list" style="color: var(--accent-cyan);"></i> Active Municipal Complaints</h3>
+        
+        <!-- Filters Toolbar -->
+        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+          <select id="filter-status" class="form-select" style="width: auto; padding: 0.4rem 0.8rem; font-size: 0.85rem;">
+            <option value="">All Statuses</option>
+            <option value="pending">Pending</option>
+            <option value="in_progress">In Progress</option>
+            <option value="fixed">Fixed</option>
+            <option value="rejected">Rejected</option>
+          </select>
+
+          <select id="filter-category" class="form-select" style="width: auto; padding: 0.4rem 0.8rem; font-size: 0.85rem;">
+            <option value="">All Categories</option>
+            <option value="broken_streetlight">Broken Streetlights</option>
+            <option value="pothole">Potholes</option>
+            <option value="drainage">Drainage</option>
+            <option value="waterlogging">Waterlogging</option>
+            <option value="damaged_footpath">Footpaths</option>
+            <option value="garbage">Garbage</option>
+          </select>
+
+          <select id="filter-severity" class="form-select" style="width: auto; padding: 0.4rem 0.8rem; font-size: 0.85rem;">
+            <option value="">All Severities</option>
+            <option value="5">Severity 5 (Critical)</option>
+            <option value="4">Severity 4 (High)</option>
+            <option value="3">Severity 3 (Moderate)</option>
+            <option value="2">Severity 2 (Low)</option>
+            <option value="1">Severity 1 (Minor)</option>
+          </select>
+
+          <button id="btn-reset-filters" class="btn btn-sm btn-secondary" title="Reset Filters">
+            <i class="fa-solid fa-filter-circle-xmark"></i>
+          </button>
+        </div>
+      </div>
+
+      <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.875rem;">
+          <thead>
+            <tr style="border-bottom: 1px solid var(--border-color); color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase;">
+              <th style="padding: 0.75rem 1rem;">ID</th>
+              <th style="padding: 0.75rem 1rem;">Category</th>
+              <th style="padding: 0.75rem 1rem;">Title & Location</th>
+              <th style="padding: 0.75rem 1rem;">Severity</th>
+              <th style="padding: 0.75rem 1rem;">Priority</th>
+              <th style="padding: 0.75rem 1rem;">Status</th>
+              <th style="padding: 0.75rem 1rem;">Citizen</th>
+              <th style="padding: 0.75rem 1rem;">Action</th>
+            </tr>
+          </thead>
+          <tbody id="officer-complaints-tbody">
+            <tr>
+              <td colspan="8" style="text-align: center; padding: 2rem; color: var(--text-muted);">
+                <span class="spinner" style="width: 18px; height: 18px; margin-bottom: 0.5rem;"></span>
+                <div>Loading municipal tickets...</div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <!-- Officer Complaint Inspection & Status Update Modal -->
+  <div id="officer-action-modal" class="modal-backdrop">
+    <div class="modal-card" style="max-width: 680px;">
+      <div class="card-header">
+        <div>
+          <span id="modal-category-label" class="badge badge-progress" style="margin-bottom: 0.25rem;">Category</span>
+          <h3 id="modal-code-title" class="card-title" style="font-size: 1.15rem;">SC-2026-1001 — Pothole</h3>
+        </div>
+        <button onclick="SafeCity.closeModal('officer-action-modal')" style="background: none; border: none; color: var(--text-muted); font-size: 1.25rem; cursor: pointer;">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <form id="officer-update-form" style="padding: 1.5rem;">
+        <input type="hidden" id="modal-complaint-id" name="complaint_id">
+
+        <!-- Linked Segment Box -->
+        <div id="modal-linked-segment"></div>
+
+        <div style="background: var(--bg-surface); padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); margin-bottom: 1.25rem;">
+          <div style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">Citizen Description & Location</div>
+          <p id="modal-desc" style="font-size: 0.9rem; margin-top: 0.25rem; line-height: 1.5; color: var(--text-primary);"></p>
+          <div style="display: flex; justify-content: space-between; font-size: 0.775rem; color: var(--text-muted); margin-top: 0.5rem; border-top: 1px solid var(--border-color); padding-top: 0.4rem;">
+            <span><i class="fa-solid fa-location-dot"></i> <span id="modal-address"></span></span>
+            <span><i class="fa-solid fa-user"></i> <span id="modal-reporter"></span></span>
+          </div>
+        </div>
+
+        <!-- Photos -->
+        <div id="modal-photos-preview" style="display: flex; gap: 1rem; margin-bottom: 1.25rem; flex-wrap: wrap;"></div>
+
+        <!-- Status Workflow Selector -->
+        <div class="form-group">
+          <label class="form-label" for="modal-status-select">Update Complaint Status *</label>
+          <select id="modal-status-select" name="status" class="form-select" required>
+            <option value="pending">Pending (Awaiting Work Crew Assignment)</option>
+            <option value="in_progress">In Progress (Maintenance Crew Dispatched)</option>
+            <option value="fixed">Fixed & Verified (Repair Completed)</option>
+            <option value="rejected">Rejected (Duplicate or Invalid Civic Ticket)</option>
+          </select>
+        </div>
+
+        <!-- Verification Notes -->
+        <div class="form-group">
+          <label class="form-label" for="modal-notes">Official Work Note / Citizen-Visible Audit Record *</label>
+          <textarea id="modal-notes" name="note" class="form-textarea" placeholder="Detail the physical repair action taken, crew ID, and verification observations..." style="min-height: 80px;" required></textarea>
+        </div>
+
+        <!-- After-Repair Photographic Evidence Upload -->
+        <div class="form-group">
+          <label class="form-label">Attach Verified Repair Photo (Required for 'Fixed' status verification)</label>
+          <input type="file" name="repair_evidence_photo" accept="image/jpeg,image/png,image/webp" class="form-input" style="padding: 0.5rem;">
+          <div class="form-hint">Provides immutable proof of resolution to update connected road safety scores.</div>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.5rem;">
+          <input type="checkbox" id="modal-is-public" name="is_public" value="1" checked>
+          <label for="modal-is-public" style="font-size: 0.85rem; color: var(--text-secondary); cursor: pointer;">
+            Make this resolution update visible to public tracking queries
+          </label>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
+          <button type="button" onclick="SafeCity.closeModal('officer-action-modal')" class="btn btn-secondary">
+            Cancel
+          </button>
+          <button type="submit" id="btn-save-officer-update" class="btn btn-primary">
+            <i class="fa-solid fa-floppy-disk"></i> Save & Recalculate Road Safety
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/map.js"></script>
+  <script src="js/dashboard.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      initOfficerDashboard();
+    });
+  </script>
+</body>
+</html>
+

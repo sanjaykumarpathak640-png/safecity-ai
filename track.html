@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Track Civic Complaint — SafeCity AI</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="brand">
+        <div class="brand-icon"><i class="fa-solid fa-shield-halved"></i></div>
+        <span>SafeCity <span style="color: var(--accent-cyan);">AI</span></span>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="index.html" class="nav-link"><i class="fa-solid fa-house"></i> Home</a></li>
+        <li><a href="report.html" class="nav-link"><i class="fa-solid fa-camera"></i> Report Issue</a></li>
+        <li><a href="route.html" class="nav-link"><i class="fa-solid fa-route"></i> SafeRoute</a></li>
+        <li><a href="heatmap.html" class="nav-link"><i class="fa-solid fa-map"></i> Safety Heatmap</a></li>
+        <li><a href="places.html" class="nav-link"><i class="fa-solid fa-hospital"></i> Safe Places</a></li>
+        <li><a href="track.html" class="nav-link active"><i class="fa-solid fa-magnifying-glass"></i> Track</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <div id="nav-auth-container"></div>
+        <button class="mobile-menu-btn" aria-label="Toggle navigation"><i class="fa-solid fa-bars"></i></button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Tracking Container -->
+  <main class="main-content">
+    <div class="page-header" style="text-align: center; max-width: 680px; margin: 0 auto 2.5rem;">
+      <h1 class="page-title" style="justify-content: center;">
+        <i class="fa-solid fa-magnifying-glass-location" style="color: var(--accent-cyan);"></i> Public Complaint Tracking
+      </h1>
+      <p class="page-subtitle">
+        Enter your unique Complaint ID to check real-time verification status, audit logs, and repair evidence.
+      </p>
+
+      <!-- Search Input -->
+      <form id="track-form" style="display: flex; gap: 0.5rem; margin-top: 1.5rem;">
+        <input type="text" id="track-input" class="form-input" placeholder="e.g. SC-2026-1001" style="font-family: var(--font-mono); font-size: 1.1rem; padding: 0.85rem 1.25rem;" required>
+        <button type="submit" id="btn-track" class="btn btn-primary btn-lg">
+          <i class="fa-solid fa-magnifying-glass"></i> Track Issue
+        </button>
+      </form>
+
+      <!-- Quick Demo Code Pills -->
+      <div style="display: flex; justify-content: center; align-items: center; gap: 0.5rem; margin-top: 1rem; flex-wrap: wrap; font-size: 0.825rem; color: var(--text-muted);">
+        <span>Quick Samples:</span>
+        <button onclick="lookupComplaint('SC-2026-1001')" class="btn btn-sm btn-secondary" style="font-family: var(--font-mono);">SC-2026-1001 (Pothole)</button>
+        <button onclick="lookupComplaint('SC-2026-1002')" class="btn btn-sm btn-secondary" style="font-family: var(--font-mono);">SC-2026-1002 (Streetlight)</button>
+        <button onclick="lookupComplaint('SC-2026-1004')" class="btn btn-sm btn-secondary" style="font-family: var(--font-mono);">SC-2026-1004 (Fixed)</button>
+      </div>
+    </div>
+
+    <!-- Results Container -->
+    <div id="tracking-results">
+      <div class="card" style="text-align: center; padding: 3rem 1.5rem; color: var(--text-secondary);">
+        <i class="fa-solid fa-magnifying-glass" style="font-size: 2.5rem; color: var(--text-muted); margin-bottom: 1rem;"></i>
+        <h3 style="font-size: 1.15rem; margin-bottom: 0.25rem;">Ready to Track</h3>
+        <p style="font-size: 0.875rem; color: var(--text-muted);">
+          Enter any complaint code above or click a quick sample to view its live status timeline.
+        </p>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-bottom">
+      <div>&copy; 2026 SafeCity AI. Privacy-preserving public tracking endpoint.</div>
+      <div><a href="about.html" style="color: var(--text-muted);">Privacy Policy</a></div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/map.js"></script>
+  <script src="js/tracking.js"></script>
+</body>
+</html>
+

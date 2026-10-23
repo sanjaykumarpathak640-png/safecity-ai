@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Report a City Problem — SafeCity AI</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="brand">
+        <div class="brand-icon"><i class="fa-solid fa-shield-halved"></i></div>
+        <span>SafeCity <span style="color: var(--accent-cyan);">AI</span></span>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="index.html" class="nav-link"><i class="fa-solid fa-house"></i> Home</a></li>
+        <li><a href="report.html" class="nav-link active"><i class="fa-solid fa-camera"></i> Report Issue</a></li>
+        <li><a href="route.html" class="nav-link"><i class="fa-solid fa-route"></i> SafeRoute</a></li>
+        <li><a href="heatmap.html" class="nav-link"><i class="fa-solid fa-map"></i> Safety Heatmap</a></li>
+        <li><a href="places.html" class="nav-link"><i class="fa-solid fa-hospital"></i> Safe Places</a></li>
+        <li><a href="track.html" class="nav-link"><i class="fa-solid fa-magnifying-glass"></i> Track</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <div id="nav-auth-container"></div>
+        <button class="mobile-menu-btn" aria-label="Toggle navigation"><i class="fa-solid fa-bars"></i></button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Report Form Container -->
+  <main class="main-content">
+    <div class="page-header">
+      <h1 class="page-title"><i class="fa-solid fa-camera-retro" style="color: var(--accent-cyan);"></i> Report a City Problem</h1>
+      <p class="page-subtitle">Submit infrastructure hazards with geotagging and photographic evidence to trigger municipal dispatch</p>
+    </div>
+
+    <div id="report-container">
+      <form id="complaint-form" class="grid-2" style="align-items: flex-start; gap: 2rem;">
+        
+        <!-- Left Column: Details & Photo -->
+        <div class="card">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.75rem;">
+            <h3 class="card-title"><i class="fa-solid fa-circle-info"></i> Issue Information</h3>
+            <button type="button" id="btn-ai-assist" class="btn btn-sm btn-outline">
+              <i class="fa-solid fa-wand-magic-sparkles"></i> AI Assistant
+            </button>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="complaint-category">Civic Category *</label>
+            <select id="complaint-category" name="category" class="form-select" required>
+              <option value="" disabled selected>Select category...</option>
+              <option value="broken_streetlight">Broken Streetlight (Poor Illumination)</option>
+              <option value="pothole">Pothole or Damaged Road Surface</option>
+              <option value="drainage">Drainage Problem / Open Manhole</option>
+              <option value="waterlogging">Waterlogging / Blocked Stormwater</option>
+              <option value="damaged_footpath">Damaged Footpath / Missing Paver</option>
+              <option value="garbage">Garbage Accumulation on Walkway</option>
+              <option value="other">Other Civic Infrastructure Issue</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="complaint-title">Brief Title *</label>
+            <input type="text" id="complaint-title" name="title" class="form-input" placeholder="e.g. Non-functional streetlight causing complete blackout" required minlength="5">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="complaint-desc">Detailed Description *</label>
+            <textarea id="complaint-desc" name="description" class="form-textarea" placeholder="Describe the physical hazard, exact location landmarks, and safety impact on commuters..." required minlength="10"></textarea>
+          </div>
+
+          <!-- Severity Selector -->
+          <div class="form-group">
+            <label class="form-label">Hazard Severity Level (1 = Minor, 5 = Critical) *</label>
+            <div class="severity-picker">
+              <button type="button" class="severity-btn" data-level="1">1 - Minor</button>
+              <button type="button" class="severity-btn" data-level="2">2 - Low</button>
+              <button type="button" class="severity-btn active" data-level="3">3 - Moderate</button>
+              <button type="button" class="severity-btn" data-level="4">4 - High</button>
+              <button type="button" class="severity-btn" data-level="5">5 - Critical</button>
+            </div>
+            <input type="hidden" id="complaint-severity" name="severity" value="3">
+            <div id="severity-desc-box" class="form-hint" style="margin-top: 0.5rem; color: var(--accent-cyan-light);">
+              Level 3: Moderate impediment; affects sidewalk or roadway flow.
+            </div>
+          </div>
+
+          <!-- Photo Upload -->
+          <div class="form-group">
+            <label class="form-label">Problem Photograph (JPG, PNG, WebP &bull; Max 5MB)</label>
+            <div id="upload-dropzone" class="upload-dropzone">
+              <div class="upload-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+              <div style="font-weight: 600; font-size: 0.95rem;">Drag & drop photo here or click to browse</div>
+              <div class="form-hint">Accepted formats: JPG, PNG, WebP up to 5MB</div>
+              <input type="file" id="complaint-photo" name="photo" accept="image/jpeg,image/png,image/webp" style="display: none;">
+            </div>
+
+            <!-- Preview -->
+            <div id="photo-preview" class="file-preview-container" style="display: none;">
+              <img id="preview-image" class="file-preview-img" src="" alt="Photo Preview">
+              <div style="flex: 1; overflow: hidden;">
+                <div id="preview-name" style="font-size: 0.85rem; font-weight: 600; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;"></div>
+                <div style="font-size: 0.75rem; color: var(--color-safe);"><i class="fa-solid fa-check"></i> Image ready for submission</div>
+              </div>
+              <button type="button" id="btn-remove-photo" class="btn btn-sm btn-secondary" style="color: var(--color-danger);">
+                <i class="fa-solid fa-trash"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Geotagging Map -->
+        <div class="card">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.75rem;">
+            <h3 class="card-title"><i class="fa-solid fa-map-pin"></i> Select Issue Location</h3>
+            <button type="button" id="btn-use-location" class="btn btn-sm btn-secondary">
+              <i class="fa-solid fa-location-crosshairs"></i> Use Current Location
+            </button>
+          </div>
+
+          <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.75rem;">
+            Search an address or click anywhere on the interactive map to position the hazard marker.
+          </p>
+
+          <!-- Address Quick Search -->
+          <div class="form-group" style="position: relative; margin-bottom: 0.75rem;">
+            <div style="position: relative;">
+              <input type="text" id="report-search-loc" class="form-input" placeholder="🔍 Search any street or area name..." autocomplete="off" style="padding-left: 2.2rem;">
+              <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 0.85rem; top: 50%; transform: translateY(-50%); color: var(--accent-cyan); font-size: 0.85rem;"></i>
+            </div>
+            <div id="report-search-dropdown" class="autocomplete-dropdown" style="display: none;"></div>
+          </div>
+
+          <div class="map-wrapper" style="margin-bottom: 1rem;">
+            <div id="report-map" class="map-element" style="height: 320px;"></div>
+          </div>
+
+          <div class="grid-2" style="margin-bottom: 1rem;">
+            <div class="form-group" style="margin: 0;">
+              <label class="form-label" style="font-size: 0.8rem;">Latitude</label>
+              <input type="text" id="complaint-lat" name="latitude" class="form-input" readonly required>
+            </div>
+            <div class="form-group" style="margin: 0;">
+              <label class="form-label" style="font-size: 0.8rem;">Longitude</label>
+              <input type="text" id="complaint-lng" name="longitude" class="form-input" readonly required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div style="display: flex; justify-content: space-between; align-items: baseline;">
+              <label class="form-label" for="complaint-address">Resolved Street Landmark / Address</label>
+              <span id="address-resolved-hint" style="font-size: 0.75rem; color: var(--accent-cyan);">Auto-geocoded</span>
+            </div>
+            <input type="text" id="complaint-address" name="address" class="form-input" placeholder="e.g. Near Industrial Link Road Pillar 45">
+          </div>
+
+          <button type="submit" id="btn-submit-complaint" class="btn btn-primary btn-lg" style="width: 100%; margin-top: 1rem;">
+            <i class="fa-solid fa-paper-plane"></i> Submit Complaint
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </main>
+
+  <!-- AI Civic Issue Assistance Modal -->
+  <div id="ai-assist-modal" class="modal-backdrop">
+    <div class="modal-card">
+      <div class="card-header">
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <i class="fa-solid fa-wand-magic-sparkles" style="color: var(--accent-cyan);"></i>
+          <h3 class="card-title">Civic Issue Analysis Review</h3>
+        </div>
+        <span id="ai-engine-badge" class="badge badge-medium">Heuristic Engine</span>
+      </div>
+
+      <div style="padding: 1.5rem;">
+        <div style="background: var(--bg-surface); padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); margin-bottom: 1.25rem;">
+          <div style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">Suggested Category</div>
+          <div id="ai-suggested-cat" style="font-size: 1.1rem; font-weight: 700; color: var(--accent-cyan); margin: 0.25rem 0;"></div>
+          <div id="ai-suggested-sev" style="font-size: 0.85rem; font-weight: 600; color: #f59e0b;"></div>
+        </div>
+
+        <div style="margin-bottom: 1rem;">
+          <label class="form-label">Suggested Standardized Title</label>
+          <div id="ai-suggested-title" style="padding: 0.6rem 0.85rem; background: var(--bg-surface); border-radius: var(--radius-md); font-weight: 600;"></div>
+        </div>
+
+        <div style="margin-bottom: 1.25rem;">
+          <label class="form-label">Refined Municipal Description</label>
+          <div id="ai-suggested-desc" style="padding: 0.75rem; background: var(--bg-surface); border-radius: var(--radius-md); font-size: 0.875rem; line-height: 1.6; color: var(--text-secondary);"></div>
+        </div>
+
+        <div class="demo-disclaimer-box" style="margin-bottom: 1.5rem;">
+          <i class="fa-solid fa-circle-info" style="font-size: 1.25rem; flex-shrink: 0;"></i>
+          <div id="ai-explanation" style="font-size: 0.8rem; line-height: 1.5;"></div>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
+          <button type="button" onclick="SafeCity.closeModal('ai-assist-modal')" class="btn btn-secondary">
+            Keep My Original
+          </button>
+          <button type="button" id="btn-apply-ai" class="btn btn-primary">
+            <i class="fa-solid fa-check"></i> Apply Suggestions
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/map.js"></script>
+  <script src="js/report.js"></script>
+</body>
+</html>
+

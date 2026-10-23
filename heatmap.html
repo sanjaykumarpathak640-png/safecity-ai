@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Safety Heatmap — SafeCity AI</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="brand">
+        <div class="brand-icon"><i class="fa-solid fa-shield-halved"></i></div>
+        <span>SafeCity <span style="color: var(--accent-cyan);">AI</span></span>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="index.html" class="nav-link"><i class="fa-solid fa-house"></i> Home</a></li>
+        <li><a href="report.html" class="nav-link"><i class="fa-solid fa-camera"></i> Report Issue</a></li>
+        <li><a href="route.html" class="nav-link"><i class="fa-solid fa-route"></i> SafeRoute</a></li>
+        <li><a href="heatmap.html" class="nav-link active"><i class="fa-solid fa-map"></i> Safety Heatmap</a></li>
+        <li><a href="places.html" class="nav-link"><i class="fa-solid fa-hospital"></i> Safe Places</a></li>
+        <li><a href="track.html" class="nav-link"><i class="fa-solid fa-magnifying-glass"></i> Track</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <div id="nav-auth-container"></div>
+        <button class="mobile-menu-btn" aria-label="Toggle navigation"><i class="fa-solid fa-bars"></i></button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Heatmap Workspace -->
+  <main class="main-content">
+    <div class="page-header" style="margin-bottom: 1.5rem;">
+      <h1 class="page-title"><i class="fa-solid fa-map-location-dot" style="color: var(--accent-cyan);"></i> City Safety & Infrastructure Heatmap</h1>
+      <p class="page-subtitle">Geographic visualization of reported civic hazards, verified emergency help points, and route corridor condition signals</p>
+    </div>
+
+    <!-- Filter Controls Toolbar -->
+    <div class="card" style="margin-bottom: 1.5rem; padding: 1rem 1.25rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+        <div style="display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap; font-size: 0.9rem;">
+          <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+            <input type="checkbox" id="cb-complaints" class="heatmap-filter-checkbox" checked>
+            <span><i class="fa-solid fa-triangle-exclamation" style="color: #ef4444;"></i> Civic Complaints Layer</span>
+          </label>
+          <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+            <input type="checkbox" id="cb-places" class="heatmap-filter-checkbox" checked>
+            <span><i class="fa-solid fa-shield-halved" style="color: #10b981;"></i> Verified Safe Places</span>
+          </label>
+          <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+            <input type="checkbox" id="cb-routes" class="heatmap-filter-checkbox" checked>
+            <span><i class="fa-solid fa-route" style="color: #06b6d4;"></i> Monitored Corridors</span>
+          </label>
+        </div>
+
+        <button onclick="loadHeatmapData()" class="btn btn-sm btn-secondary">
+          <i class="fa-solid fa-arrows-rotate"></i> Reload Layers
+        </button>
+      </div>
+    </div>
+
+    <!-- Map & Legend Grid -->
+    <div class="grid-2" style="grid-template-columns: 3fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+      
+      <!-- Leaflet Map Element -->
+      <div class="map-wrapper">
+        <div id="safety-heatmap" class="map-element" style="height: 540px;"></div>
+      </div>
+
+      <!-- Map Legend & Details -->
+      <div style="display: flex; flex-direction: column; gap: 1rem;">
+        <div class="card">
+          <h4 style="font-size: 1rem; font-weight: 700; margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
+            <i class="fa-solid fa-layer-group" style="color: var(--accent-cyan);"></i> Layer Legend
+          </h4>
+
+          <div class="map-legend">
+            <div class="legend-item">
+              <div class="legend-dot" style="background: var(--color-safe);"></div>
+              <div>
+                <strong style="color: var(--color-safe);">Green: Favorable Signals</strong>
+                <div style="font-size: 0.75rem; color: var(--text-muted);">Verified Police, Hospitals, & well-lit commercial zones</div>
+              </div>
+            </div>
+
+            <div class="legend-item">
+              <div class="legend-dot" style="background: var(--color-caution);"></div>
+              <div>
+                <strong style="color: var(--color-caution);">Yellow: Caution / Moderate</strong>
+                <div style="font-size: 0.75rem; color: var(--text-muted);">Level 2-3 reports: minor waterlogging or damaged footpaths</div>
+              </div>
+            </div>
+
+            <div class="legend-item">
+              <div class="legend-dot" style="background: var(--color-warning);"></div>
+              <div>
+                <strong style="color: var(--color-warning);">Orange: High Concern</strong>
+                <div style="font-size: 0.75rem; color: var(--text-muted);">Level 4 reports: non-functional streetlights & deep potholes</div>
+              </div>
+            </div>
+
+            <div class="legend-item">
+              <div class="legend-dot" style="background: var(--color-danger);"></div>
+              <div>
+                <strong style="color: var(--color-danger);">Red: Critical Hazard</strong>
+                <div style="font-size: 0.75rem; color: var(--text-muted);">Level 5 reports: open manholes or hazardous cave-ins</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="font-size: 0.85rem; line-height: 1.6;">
+          <h4 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--text-primary);">
+            <i class="fa-solid fa-circle-question" style="color: var(--accent-cyan);"></i> About the Data
+          </h4>
+          <p style="color: var(--text-secondary); margin-bottom: 0.75rem;">
+            Radius halos represent the estimated physical buffer impact of reported infrastructure impediments.
+          </p>
+          <div style="font-size: 0.775rem; color: var(--text-muted);">
+            Exact citizen travel trajectories and private user identities are strictly excluded from public map layers.
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Legal & Methodological Disclaimer -->
+    <div class="demo-disclaimer-box" style="margin-bottom: 2rem;">
+      <i class="fa-solid fa-triangle-exclamation" style="font-size: 1.4rem; flex-shrink: 0;"></i>
+      <div>
+        <strong>Transparent Methodology Notice:</strong>
+        Map layers represent informational civic infrastructure observations submitted by citizens and municipal crews. They do not constitute crime-risk classifications or predict personal safety.
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-bottom">
+      <div>&copy; 2026 SafeCity AI Heatmap. Powered by Leaflet & OpenStreetMap.</div>
+      <div><a href="about.html" style="color: var(--text-muted);">Safety Disclaimer</a></div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/map.js"></script>
+  <script src="js/heatmap.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Safe Journey Monitor — SafeCity AI</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="brand">
+        <div class="brand-icon"><i class="fa-solid fa-shield-halved"></i></div>
+        <span>SafeCity <span style="color: var(--accent-cyan);">AI</span></span>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="index.html" class="nav-link"><i class="fa-solid fa-house"></i> Home</a></li>
+        <li><a href="route.html" class="nav-link"><i class="fa-solid fa-route"></i> SafeRoute</a></li>
+        <li><a href="places.html" class="nav-link"><i class="fa-solid fa-hospital"></i> Safe Places</a></li>
+        <li><a href="sos.html" class="nav-link" style="color: #ef4444;"><i class="fa-solid fa-bell"></i> SOS</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <div id="nav-auth-container"></div>
+        <button class="mobile-menu-btn" aria-label="Toggle navigation"><i class="fa-solid fa-bars"></i></button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Journey Monitor Container -->
+  <main class="main-content" style="max-width: 800px;">
+    <div class="page-header" style="text-align: center; margin-bottom: 2rem;">
+      <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: var(--color-safe-bg); color: var(--color-safe); border: 1px solid rgba(16, 185, 129, 0.3); padding: 0.3rem 1rem; border-radius: var(--radius-full); font-size: 0.8rem; font-weight: 700; margin-bottom: 0.75rem;">
+        <span class="spinner" style="width: 12px; height: 12px; border-top-color: var(--color-safe);"></span> Safe Journey Active Monitoring
+      </div>
+      <h1 class="page-title" style="justify-content: center;">
+        <i class="fa-solid fa-person-walking-arrow-right" style="color: var(--accent-cyan);"></i> Active Travel Companion
+      </h1>
+      <p class="page-subtitle">Track your travel progress, share real-time status with trusted contacts, and access one-tap emergency safety features</p>
+    </div>
+
+    <!-- Active Journey Card -->
+    <div class="card" style="margin-bottom: 2rem; padding: 2rem;">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1.25rem; margin-bottom: 1.5rem;">
+        <div>
+          <div style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">Tracking Code</div>
+          <div id="jrn-code" style="font-family: var(--font-mono); font-size: 1.5rem; font-weight: 800; color: var(--accent-cyan);">
+            Initializing...
+          </div>
+        </div>
+
+        <div style="text-align: right;">
+          <div style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">Elapsed Time</div>
+          <div id="journey-timer" style="font-family: var(--font-mono); font-size: 2rem; font-weight: 800; color: var(--text-primary);">
+            00:00:00
+          </div>
+        </div>
+      </div>
+
+      <!-- Route Milestones -->
+      <div class="grid-2" style="margin-bottom: 1.5rem;">
+        <div style="background: var(--bg-surface); padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+          <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">From (Origin)</div>
+          <div id="jrn-origin" style="font-weight: 700; font-size: 1.05rem; margin-top: 0.2rem;">Metro Central Station</div>
+        </div>
+        <div style="background: var(--bg-surface); padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+          <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">To (Destination)</div>
+          <div id="jrn-destination" style="font-weight: 700; font-size: 1.05rem; margin-top: 0.2rem;">Tech Innovation Hub</div>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 1.5rem; background: var(--bg-surface); padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); margin-bottom: 2rem; flex-wrap: wrap;">
+        <div>
+          <div style="font-size: 0.75rem; color: var(--text-muted);">Selected Corridor</div>
+          <div id="jrn-route" style="font-weight: 700; color: var(--accent-cyan);">Route A</div>
+        </div>
+        <div>
+          <div style="font-size: 0.75rem; color: var(--text-muted);">Corridor Safety Score</div>
+          <div id="jrn-score" style="font-weight: 700; color: var(--color-safe);">85.8 / 100</div>
+        </div>
+        <div>
+          <div style="font-size: 0.75rem; color: var(--text-muted);">Session Security</div>
+          <div style="font-weight: 700; color: #a7f3d0;"><i class="fa-solid fa-lock"></i> 3-Hour Expiring Token</div>
+        </div>
+      </div>
+
+      <!-- Trusted Contact Share Box -->
+      <div style="background: rgba(6, 182, 212, 0.06); border: 1px solid var(--border-highlight); padding: 1.5rem; border-radius: var(--radius-md); margin-bottom: 2rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+          <h4 style="font-size: 1rem; font-weight: 700; color: var(--accent-cyan-light); display: flex; align-items: center; gap: 0.5rem;">
+            <i class="fa-solid fa-share-nodes"></i> Share Status with Trusted Contact
+          </h4>
+          <span class="badge badge-fixed">Active Share Token</span>
+        </div>
+        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem;">
+          Send this secure temporary link to family or friends so they can verify your journey milestones without accessing your private account.
+        </p>
+
+        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+          <input type="text" id="share-link-input" class="form-input" readonly style="flex: 1; font-family: var(--font-mono); font-size: 0.85rem;" value="Generating link...">
+          <button type="button" id="btn-copy-share" class="btn btn-primary">
+            <i class="fa-solid fa-copy"></i> Copy Link
+          </button>
+          <button type="button" id="btn-revoke-share" class="btn btn-secondary" style="color: var(--color-danger);">
+            <i class="fa-solid fa-ban"></i> Revoke Access
+          </button>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+        <button type="button" id="btn-end-journey" class="btn btn-success btn-lg" style="flex: 2;">
+          <i class="fa-solid fa-flag-checkered"></i> I Have Arrived (End Journey)
+        </button>
+        <a href="sos.html" class="btn btn-danger btn-lg" style="flex: 1;">
+          <i class="fa-solid fa-bell"></i> Emergency SOS
+        </a>
+      </div>
+    </div>
+
+    <!-- Privacy & Mechanism Notice -->
+    <div class="demo-disclaimer-box">
+      <i class="fa-solid fa-user-shield" style="font-size: 1.4rem; flex-shrink: 0;"></i>
+      <div>
+        <strong>Privacy-Preserving Architecture:</strong>
+        SafeCity AI uses cryptographically random, temporary status tokens that automatically expire after 3 hours. Continuous GPS surveillance is not performed; status links reflect traveler check-in milestones.
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-bottom">
+      <div>&copy; 2026 SafeCity AI. Travel safely.</div>
+      <div><a href="about.html" style="color: var(--text-muted);">Safety Disclaimer</a></div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/journey.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      initJourneyMonitor();
+    });
+  </script>
+</body>
+</html>
+

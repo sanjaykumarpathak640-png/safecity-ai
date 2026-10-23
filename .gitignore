@@ -1,0 +1,11 @@
+# SafeCity AI .gitignore
+safecity.sqlite
+uploads/complaints/*
+uploads/repairs/*
+!uploads/complaints/.gitkeep
+!uploads/repairs/.gitkeep
+!uploads/.htaccess
+test_shot.png
+.DS_Store
+Thumbs.db
+

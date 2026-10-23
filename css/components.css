@@ -1,0 +1,505 @@
+/* ==========================================================================
+   SafeCity AI - Reusable Components & Ultra-Modern UI Controls
+   ========================================================================== */
+
+/* Modern Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: 0.72rem 1.4rem;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: var(--transition);
+  text-decoration: none;
+  white-space: nowrap;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+  color: #ffffff;
+  box-shadow: 0 4px 18px rgba(6, 182, 212, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, var(--accent-cyan-light), var(--accent-blue-hover));
+  box-shadow: 0 6px 25px rgba(6, 182, 212, 0.6);
+  transform: translateY(-2px);
+}
+
+.btn-secondary {
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+.btn-secondary:hover {
+  background: var(--bg-surface-light);
+  border-color: rgba(255, 255, 255, 0.25);
+  transform: translateY(-1px);
+}
+
+.btn-outline {
+  background: transparent;
+  border-color: var(--border-highlight);
+  color: var(--accent-cyan-light);
+}
+
+.btn-outline:hover {
+  background: rgba(6, 182, 212, 0.12);
+  border-color: var(--accent-cyan-light);
+  box-shadow: 0 0 16px rgba(6, 182, 212, 0.3);
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: #fff;
+  box-shadow: 0 4px 18px rgba(239, 68, 68, 0.4);
+}
+
+.btn-danger:hover {
+  background: #dc2626;
+  box-shadow: 0 6px 25px rgba(239, 68, 68, 0.6);
+  transform: translateY(-2px);
+}
+
+.btn-success {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: #fff;
+  box-shadow: 0 4px 18px rgba(16, 185, 129, 0.4);
+}
+
+.btn-sm {
+  padding: 0.45rem 0.95rem;
+  font-size: 0.85rem;
+  border-radius: var(--radius-sm);
+}
+
+.btn-lg {
+  padding: 0.95rem 2rem;
+  font-size: 1.1rem;
+  border-radius: var(--radius-lg);
+  font-weight: 700;
+}
+
+/* Form Elements */
+.form-group {
+  margin-bottom: 1.35rem;
+  position: relative;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 0.45rem;
+}
+
+.form-input,
+.form-select,
+.form-textarea {
+  width: 100%;
+  padding: 0.8rem 1.1rem;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 0.975rem;
+  transition: var(--transition);
+  outline: none;
+}
+
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+  border-color: var(--accent-cyan);
+  box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.25), 0 0 16px rgba(6, 182, 212, 0.2);
+  background-color: rgba(19, 29, 51, 0.95);
+}
+
+.form-textarea {
+  min-height: 110px;
+  resize: vertical;
+}
+
+.form-hint {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 0.4rem;
+}
+
+/* Autocomplete Suggestion Dropdown */
+.autocomplete-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 1200;
+  background: var(--bg-card);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-highlight);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg), 0 0 20px rgba(6, 182, 212, 0.15);
+  margin-top: 4px;
+  max-height: 260px;
+  overflow-y: auto;
+  display: none;
+}
+
+.autocomplete-item {
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-subtle);
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.autocomplete-item:hover {
+  background: rgba(6, 182, 212, 0.12);
+  color: var(--accent-cyan-light);
+}
+
+/* Interactive Severity Selector (1 to 5) */
+.severity-picker {
+  display: flex;
+  gap: 0.6rem;
+  margin-top: 0.5rem;
+}
+
+.severity-btn {
+  flex: 1;
+  padding: 0.85rem 0.6rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  font-weight: 700;
+  text-align: center;
+  cursor: pointer;
+  transition: var(--transition);
+  font-size: 0.9rem;
+}
+
+.severity-btn:hover {
+  background: var(--bg-surface-light);
+  color: var(--text-primary);
+}
+
+.severity-btn.active[data-level="1"] { background: rgba(16, 185, 129, 0.22); border-color: #10b981; color: #34d399; box-shadow: 0 0 12px rgba(16, 185, 129, 0.3); }
+.severity-btn.active[data-level="2"] { background: rgba(59, 130, 246, 0.22); border-color: #3b82f6; color: #60a5fa; box-shadow: 0 0 12px rgba(59, 130, 246, 0.3); }
+.severity-btn.active[data-level="3"] { background: rgba(245, 158, 11, 0.22); border-color: #f59e0b; color: #fbbf24; box-shadow: 0 0 12px rgba(245, 158, 11, 0.3); }
+.severity-btn.active[data-level="4"] { background: rgba(249, 115, 22, 0.22); border-color: #f97316; color: #fb923c; box-shadow: 0 0 12px rgba(249, 115, 22, 0.3); }
+.severity-btn.active[data-level="5"] { background: rgba(239, 68, 68, 0.25); border-color: #ef4444; color: #f87171; box-shadow: 0 0 16px rgba(239, 68, 68, 0.4); }
+
+/* File Drag & Drop */
+.upload-dropzone {
+  border: 2px dashed rgba(34, 211, 238, 0.35);
+  border-radius: var(--radius-lg);
+  padding: 2.25rem 1.5rem;
+  text-align: center;
+  background: rgba(19, 29, 51, 0.5);
+  cursor: pointer;
+  transition: var(--transition);
+  position: relative;
+}
+
+.upload-dropzone:hover,
+.upload-dropzone.dragover {
+  border-color: var(--accent-cyan);
+  background: rgba(6, 182, 212, 0.08);
+  box-shadow: 0 0 20px rgba(6, 182, 212, 0.2);
+}
+
+.upload-icon {
+  font-size: 2.5rem;
+  color: var(--accent-cyan-light);
+  margin-bottom: 0.6rem;
+}
+
+.file-preview-container {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1rem;
+  padding: 0.85rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+}
+
+.file-preview-img {
+  width: 70px;
+  height: 70px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+}
+
+/* Map Containers */
+.map-wrapper {
+  position: relative;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-md);
+}
+
+.map-element {
+  width: 100%;
+  height: 500px;
+  background: #0b1222;
+  z-index: 1;
+}
+
+/* Map Mode Pills */
+.map-mode-badge {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  z-index: 1000;
+  background: rgba(7, 12, 24, 0.88);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--border-highlight);
+  color: var(--accent-cyan-light);
+  padding: 0.4rem 0.85rem;
+  border-radius: var(--radius-full);
+  font-size: 0.775rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.pulse-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-safe);
+  animation: radarPulse 1.8s infinite;
+}
+
+@keyframes radarPulse {
+  0% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+  70% { transform: scale(1.1); box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+  100% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
+/* Modals */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(4, 7, 16, 0.88);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+.modal-backdrop.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-card {
+  background: var(--bg-card);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--border-highlight);
+  border-radius: var(--radius-xl);
+  width: 100%;
+  max-width: 660px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-lg), 0 0 30px rgba(6, 182, 212, 0.2);
+  transform: translateY(20px);
+  transition: transform 0.25s ease;
+}
+
+.modal-backdrop.active .modal-card {
+  transform: translateY(0);
+}
+
+/* Toast Container */
+#toast-container {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 3000;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-width: 400px;
+  pointer-events: none;
+}
+
+.toast {
+  background: rgba(15, 23, 42, 0.95);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 1.05rem 1.35rem;
+  box-shadow: var(--shadow-lg);
+  color: var(--text-primary);
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+  pointer-events: auto;
+  animation: toastIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 0.925rem;
+}
+
+.toast-success { border-left: 4px solid var(--color-safe); }
+.toast-error { border-left: 4px solid var(--color-danger); }
+.toast-info { border-left: 4px solid var(--accent-cyan); }
+.toast-warning { border-left: 4px solid var(--color-caution); }
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translateX(50px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* Route Score Meter */
+.score-circle {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  border: 4px solid currentColor;
+  flex-shrink: 0;
+  box-shadow: 0 0 20px currentColor;
+  transition: var(--transition);
+}
+
+.score-circle.safe {
+  color: var(--color-safe);
+  background: var(--color-safe-bg);
+}
+
+.score-circle.caution {
+  color: var(--color-caution);
+  background: var(--color-caution-bg);
+}
+
+.score-circle.warning {
+  color: var(--color-danger);
+  background: var(--color-danger-bg);
+}
+
+/* SOS Emergency Giant Button */
+.sos-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3.5rem 1.5rem;
+  text-align: center;
+}
+
+.sos-pulse-ring {
+  position: relative;
+  width: 230px;
+  height: 230px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sos-giant-btn {
+  width: 175px;
+  height: 175px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #ef4444 0%, #991b1b 100%);
+  border: 6px solid rgba(255, 255, 255, 0.25);
+  color: #fff;
+  font-size: 2.35rem;
+  font-weight: 900;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  cursor: pointer;
+  box-shadow: 0 0 45px rgba(239, 68, 68, 0.65);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  user-select: none;
+}
+
+.sos-giant-btn:hover {
+  transform: scale(1.06);
+  box-shadow: 0 0 65px rgba(239, 68, 68, 0.85);
+}
+
+.sos-giant-btn:active {
+  transform: scale(0.96);
+}
+
+.sos-pulse-wave {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid rgba(239, 68, 68, 0.5);
+  animation: sosPulse 2s infinite cubic-bezier(0.36, 0.11, 0.89, 0.32);
+}
+
+@keyframes sosPulse {
+  0% { transform: scale(0.85); opacity: 1; }
+  100% { transform: scale(1.45); opacity: 0; }
+}
+
+.countdown-display {
+  font-size: 4.5rem;
+  font-weight: 900;
+  color: #ef4444;
+  font-family: var(--font-mono);
+  margin: 1.5rem 0;
+  text-shadow: 0 0 25px rgba(239, 68, 68, 0.6);
+}
+
+/* Spinner */
+.spinner {
+  width: 24px;
+  height: 24px;
+  border: 3px solid rgba(255, 255, 255, 0.15);
+  border-top-color: var(--accent-cyan-light);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  display: inline-block;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Map Marker Animations */
+.leaflet-marker-icon {
+  transition: transform 0.2s ease;
+}
+.leaflet-marker-icon:hover {
+  transform: scale(1.15) !important;
+  z-index: 1000 !important;
+}

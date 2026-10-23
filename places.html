@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nearby Safe Places — SafeCity AI</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="brand">
+        <div class="brand-icon"><i class="fa-solid fa-shield-halved"></i></div>
+        <span>SafeCity <span style="color: var(--accent-cyan);">AI</span></span>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="index.html" class="nav-link"><i class="fa-solid fa-house"></i> Home</a></li>
+        <li><a href="report.html" class="nav-link"><i class="fa-solid fa-camera"></i> Report Issue</a></li>
+        <li><a href="route.html" class="nav-link"><i class="fa-solid fa-route"></i> SafeRoute</a></li>
+        <li><a href="heatmap.html" class="nav-link"><i class="fa-solid fa-map"></i> Safety Heatmap</a></li>
+        <li><a href="places.html" class="nav-link active"><i class="fa-solid fa-hospital"></i> Safe Places</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <div id="nav-auth-container"></div>
+        <button class="mobile-menu-btn" aria-label="Toggle navigation"><i class="fa-solid fa-bars"></i></button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Places Workspace -->
+  <main class="main-content">
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem;">
+      <div>
+        <h1 class="page-title"><i class="fa-solid fa-hospital-user" style="color: var(--accent-cyan);"></i> Verified Public Safe Places</h1>
+        <p class="page-subtitle">Locate verified municipal police stations, 24/7 hospitals, women safety kiosks, and emergency help points</p>
+      </div>
+      <div>
+        <button type="button" id="btn-places-loc" class="btn btn-primary">
+          <i class="fa-solid fa-location-crosshairs"></i> Recalculate Distance from GPS
+        </button>
+      </div>
+    </div>
+
+    <!-- Filter Buttons Bar -->
+    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.5rem;">
+      <button class="btn btn-sm btn-secondary filter-place-btn active" data-type="all">All Locations</button>
+      <button class="btn btn-sm btn-secondary filter-place-btn" data-type="police"><i class="fa-solid fa-shield-halved" style="color: #3b82f6;"></i> Police Stations</button>
+      <button class="btn btn-sm btn-secondary filter-place-btn" data-type="hospital"><i class="fa-solid fa-hospital" style="color: #ef4444;"></i> 24/7 Hospitals</button>
+      <button class="btn btn-sm btn-secondary filter-place-btn" data-type="women_help"><i class="fa-solid fa-person-shelter" style="color: #ec4899;"></i> Women Safety Booths</button>
+      <button class="btn btn-sm btn-secondary filter-place-btn" data-type="fire_station"><i class="fa-solid fa-fire-extinguisher" style="color: #f97316;"></i> Fire Stations</button>
+      <button class="btn btn-sm btn-secondary filter-place-btn" data-type="emergency_kiosk"><i class="fa-solid fa-phone-volume" style="color: #10b981;"></i> Transit Kiosks</button>
+    </div>
+
+    <!-- Map & Places List Grid -->
+    <div class="grid-2" style="grid-template-columns: 1fr 1fr; gap: 1.5rem; align-items: flex-start; margin-bottom: 2rem;">
+      
+      <!-- Interactive Leaflet Map -->
+      <div class="map-wrapper" style="position: sticky; top: calc(var(--header-height) + 1rem);">
+        <div id="places-map" class="map-element" style="height: 520px;"></div>
+      </div>
+
+      <!-- Places List -->
+      <div id="places-list">
+        <!-- Populated dynamically by js/places.js -->
+      </div>
+
+    </div>
+
+    <div class="demo-disclaimer-box">
+      <i class="fa-solid fa-circle-check" style="font-size: 1.4rem; flex-shrink: 0; color: var(--color-safe);"></i>
+      <div>
+        <strong>Verified Directory Standards:</strong>
+        SafeCity AI records only verified, staffed public assistance locations with confirmed physical infrastructure and working phone helplines. Data coordinates are cross-verified with municipal emergency registers.
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-bottom">
+      <div>&copy; 2026 SafeCity AI Verified Civic Directory.</div>
+      <div><a href="about.html" style="color: var(--text-muted);">Disclaimer</a></div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/map.js"></script>
+  <script src="js/places.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign In — SafeCity AI</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="brand">
+        <div class="brand-icon"><i class="fa-solid fa-shield-halved"></i></div>
+        <span>SafeCity <span style="color: var(--accent-cyan);">AI</span></span>
+      </a>
+      <div class="nav-actions">
+        <a href="signup.html" class="btn btn-sm btn-outline">Create Account</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Login Form Container -->
+  <main class="main-content" style="display: flex; align-items: center; justify-content: center; min-height: calc(100vh - 200px);">
+    <div class="card" style="width: 100%; max-width: 460px; padding: 2.25rem;">
+      <div style="text-align: center; margin-bottom: 2rem;">
+        <div style="width: 52px; height: 52px; border-radius: var(--radius-md); background: rgba(6, 182, 212, 0.12); color: var(--accent-cyan); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin: 0 auto 1rem; border: 1px solid var(--border-highlight);">
+          <i class="fa-solid fa-lock"></i>
+        </div>
+        <h1 style="font-size: 1.65rem; font-weight: 800; letter-spacing: -0.02em;">Welcome Back</h1>
+        <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 0.25rem;">
+          Sign in to your SafeCity civic or officer account
+        </p>
+      </div>
+
+      <!-- Quick Demo Login Buttons -->
+      <div style="margin-bottom: 1.5rem; background: var(--bg-surface); padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+        <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; margin-bottom: 0.5rem;">
+          <i class="fa-solid fa-bolt" style="color: #eab308;"></i> Local Testing Quick-Fill Demo
+        </div>
+        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+          <button type="button" onclick="Auth.fillDemo('citizen')" class="btn btn-sm btn-secondary" style="flex: 1;">
+            <i class="fa-solid fa-user"></i> Citizen
+          </button>
+          <button type="button" onclick="Auth.fillDemo('officer')" class="btn btn-sm btn-outline" style="flex: 1;">
+            <i class="fa-solid fa-user-shield"></i> Officer
+          </button>
+          <button type="button" onclick="Auth.fillDemo('admin')" class="btn btn-sm btn-secondary" style="flex: 1;">
+            <i class="fa-solid fa-gear"></i> Admin
+          </button>
+        </div>
+      </div>
+
+      <form id="login-form">
+        <div class="form-group">
+          <label class="form-label" for="login-email">Email Address</label>
+          <input type="email" id="login-email" class="form-input" placeholder="name@example.com" required autocomplete="email">
+        </div>
+
+        <div class="form-group">
+          <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.4rem;">
+            <label class="form-label" for="login-password" style="margin: 0;">Password</label>
+          </div>
+          <input type="password" id="login-password" class="form-input" placeholder="••••••••" required autocomplete="current-password">
+        </div>
+
+        <div id="login-error" style="display: none; background: var(--color-danger-bg); border: 1px solid rgba(239, 68, 68, 0.4); color: #fca5a5; padding: 0.75rem; border-radius: var(--radius-md); font-size: 0.85rem; margin-bottom: 1.25rem;"></div>
+
+        <button type="submit" id="btn-login-submit" class="btn btn-primary" style="width: 100%; padding: 0.75rem;">
+          <i class="fa-solid fa-arrow-right-to-bracket"></i> Sign In
+        </button>
+      </form>
+
+      <div style="text-align: center; margin-top: 1.5rem; font-size: 0.875rem; color: var(--text-secondary);">
+        Don't have an account yet? <a href="signup.html" style="color: var(--accent-cyan-light); font-weight: 600; text-decoration: none;">Register as a Citizen</a>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/app.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('login-form');
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('login-email').value.trim();
+        const password = document.getElementById('login-password').value;
+        const btn = document.getElementById('btn-login-submit');
+        const errBox = document.getElementById('login-error');
+
+        errBox.style.display = 'none';
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner" style="width:16px; height:16px;"></span> Signing In...';
+
+        try {
+          const user = await Auth.login(email, password);
+          SafeCity.showToast(`Welcome back, ${user.name}!`, 'success');
+
+          const urlParams = new URLSearchParams(window.location.search);
+          const redirect = urlParams.get('redirect');
+
+          setTimeout(() => {
+            if (redirect) {
+              window.location.href = redirect;
+            } else if (user.role === 'officer' || user.role === 'admin') {
+              window.location.href = 'officer-dashboard.html';
+            } else {
+              window.location.href = 'dashboard.html';
+            }
+          }, 600);
+
+        } catch (err) {
+          errBox.textContent = err.message || 'Authentication failed. Please verify email and password.';
+          errBox.style.display = 'block';
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fa-solid fa-arrow-right-to-bracket"></i> Sign In';
+        }
+      });
+    });
+  </script>
+</body>
+</html>
+

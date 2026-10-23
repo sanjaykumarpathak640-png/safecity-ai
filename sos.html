@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Emergency SOS — SafeCity AI</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="brand">
+        <div class="brand-icon" style="background: linear-gradient(135deg, #ef4444, #dc2626);"><i class="fa-solid fa-triangle-exclamation"></i></div>
+        <span>SafeCity <span style="color: #ef4444;">SOS</span></span>
+        <span class="brand-badge" style="background: rgba(239, 68, 68, 0.15); border-color: rgba(239, 68, 68, 0.4); color: #fca5a5;">Emergency</span>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="index.html" class="nav-link"><i class="fa-solid fa-house"></i> Home</a></li>
+        <li><a href="route.html" class="nav-link"><i class="fa-solid fa-route"></i> SafeRoute</a></li>
+        <li><a href="places.html" class="nav-link"><i class="fa-solid fa-hospital"></i> Safe Places</a></li>
+        <li><a href="sos.html" class="nav-link active" style="color: #ef4444;"><i class="fa-solid fa-bell"></i> SOS</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <div id="nav-auth-container"></div>
+        <button class="mobile-menu-btn" aria-label="Toggle navigation"><i class="fa-solid fa-bars"></i></button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main SOS Workspace -->
+  <main class="main-content" style="max-width: 720px;">
+    
+    <!-- Initial State View -->
+    <div id="sos-initial-view" class="card sos-container" style="margin-bottom: 2rem;">
+      <h1 style="font-size: 1.85rem; font-weight: 800; margin-bottom: 0.5rem; color: #f87171;">
+        Emergency Assistance
+      </h1>
+      <p style="color: var(--text-secondary); max-width: 480px; margin-bottom: 2rem; font-size: 0.95rem;">
+        Press the button below to trigger the emergency alert. A 10-second countdown allows cancellation if pressed accidentally.
+      </p>
+
+      <div class="sos-pulse-ring">
+        <div class="sos-pulse-wave"></div>
+        <button type="button" id="sos-trigger-btn" class="sos-giant-btn" aria-label="Trigger SOS">
+          <i class="fa-solid fa-bell" style="font-size: 2.5rem;"></i>
+          <span>SOS</span>
+        </button>
+      </div>
+
+      <div id="sos-location-text" style="font-size: 0.85rem; color: var(--text-muted); margin-top: 2rem;">
+        <span class="spinner" style="width: 12px; height: 12px;"></span> Geocoding your current location...
+      </div>
+    </div>
+
+    <!-- 10-Second Countdown View -->
+    <div id="sos-countdown-view" class="card sos-container" style="display: none; border-color: rgba(239, 68, 68, 0.5); background: radial-gradient(circle, rgba(239, 68, 68, 0.1) 0%, var(--bg-card) 70%); margin-bottom: 2rem;">
+      <div style="font-size: 1rem; font-weight: 700; color: #f87171; text-transform: uppercase; letter-spacing: 0.05em;">
+        Emergency Alert Initiated
+      </div>
+      <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 0.25rem;">
+        Logging alert to database in:
+      </p>
+
+      <div class="countdown-display" id="countdown-number">10</div>
+
+      <button type="button" id="sos-cancel-btn" class="btn btn-secondary btn-lg" style="border: 2px solid var(--color-safe); color: var(--color-safe); font-size: 1.1rem; padding: 0.85rem 2.25rem;">
+        <i class="fa-solid fa-circle-check"></i> I Am Safe — Cancel SOS
+      </button>
+
+      <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 1.5rem;">
+        Pressing cancel immediately aborts the alert and confirms your safety.
+      </div>
+    </div>
+
+    <!-- Alert Completed View -->
+    <div id="sos-completed-view" class="card" style="display: none; padding: 2rem; border-color: rgba(239, 68, 68, 0.5); margin-bottom: 2rem; text-align: center;">
+      <div style="width: 64px; height: 64px; border-radius: 50%; background: var(--color-danger-bg); color: var(--color-danger); display: flex; align-items: center; justify-content: center; font-size: 2rem; margin: 0 auto 1rem; border: 2px solid var(--color-danger);">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+      </div>
+      <h2 style="font-size: 1.5rem; margin-bottom: 0.5rem; color: #f87171;">SOS Alert Registered (Demo Mode)</h2>
+      <p style="color: var(--text-secondary); max-width: 500px; margin: 0 auto 1.5rem; font-size: 0.9rem;">
+        Your emergency event has been logged with timestamp and geocoordinates into the SafeCity database.
+      </p>
+
+      <div style="background: var(--bg-surface); padding: 1rem; border-radius: var(--radius-md); max-width: 380px; margin: 0 auto 1.5rem; border: 1px solid var(--border-color); font-size: 0.875rem;">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 0.35rem;">
+          <span style="color: var(--text-muted);">Event Code:</span>
+          <strong id="sos-alert-id" style="font-family: var(--font-mono); color: var(--accent-cyan);">ALERT #1</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between;">
+          <span style="color: var(--text-muted);">Timestamp:</span>
+          <strong id="sos-timestamp">Just now</strong>
+        </div>
+      </div>
+
+      <a href="sos.html" class="btn btn-secondary btn-sm">
+        <i class="fa-solid fa-arrow-rotate-left"></i> Return to SOS Standby
+      </a>
+    </div>
+
+    <!-- Direct Helpline Dialers (India) -->
+    <div class="card" style="margin-bottom: 2rem;">
+      <h3 class="card-title" style="margin-bottom: 1rem;">
+        <i class="fa-solid fa-phone-volume" style="color: var(--accent-cyan);"></i> Immediate National Emergency Dialers
+      </h3>
+      <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1.25rem;">
+        Tap below to directly place phone calls to official emergency services:
+      </p>
+
+      <div class="grid-2">
+        <a href="tel:112" class="btn btn-secondary" style="padding: 1rem; justify-content: space-between; border-color: rgba(6, 182, 212, 0.4);">
+          <div style="text-align: left;">
+            <div style="font-weight: 800; font-size: 1.25rem; color: var(--accent-cyan);">112</div>
+            <div style="font-size: 0.775rem; color: var(--text-muted);">National Emergency Response</div>
+          </div>
+          <i class="fa-solid fa-phone" style="font-size: 1.25rem; color: var(--accent-cyan);"></i>
+        </a>
+
+        <a href="tel:100" class="btn btn-secondary" style="padding: 1rem; justify-content: space-between; border-color: rgba(59, 130, 246, 0.4);">
+          <div style="text-align: left;">
+            <div style="font-weight: 800; font-size: 1.25rem; color: #60a5fa;">100</div>
+            <div style="font-size: 0.775rem; color: var(--text-muted);">Police Control Room</div>
+          </div>
+          <i class="fa-solid fa-shield-halved" style="font-size: 1.25rem; color: #60a5fa;"></i>
+        </a>
+
+        <a href="tel:1091" class="btn btn-secondary" style="padding: 1rem; justify-content: space-between; border-color: rgba(236, 72, 153, 0.4);">
+          <div style="text-align: left;">
+            <div style="font-weight: 800; font-size: 1.25rem; color: #f472b6;">1091</div>
+            <div style="font-size: 0.775rem; color: var(--text-muted);">Women Helpline in Distress</div>
+          </div>
+          <i class="fa-solid fa-person-shelter" style="font-size: 1.25rem; color: #f472b6;"></i>
+        </a>
+
+        <a href="tel:108" class="btn btn-secondary" style="padding: 1rem; justify-content: space-between; border-color: rgba(239, 68, 68, 0.4);">
+          <div style="text-align: left;">
+            <div style="font-weight: 800; font-size: 1.25rem; color: #f87171;">108</div>
+            <div style="font-size: 0.775rem; color: var(--text-muted);">Emergency Medical Ambulance</div>
+          </div>
+          <i class="fa-solid fa-truck-medical" style="font-size: 1.25rem; color: #f87171;"></i>
+        </a>
+      </div>
+    </div>
+
+    <!-- Demonstration & Safety Disclaimer -->
+    <div class="demo-disclaimer-box" style="background: rgba(239, 68, 68, 0.08); border-color: rgba(239, 68, 68, 0.3); color: #fca5a5;">
+      <i class="fa-solid fa-triangle-exclamation" style="font-size: 1.5rem; flex-shrink: 0; color: #ef4444;"></i>
+      <div style="font-size: 0.85rem; line-height: 1.6;">
+        <strong>CRITICAL SAFETY NOTICE (Demonstration Prototype):</strong><br>
+        A successful database save in this prototype does NOT dispatch an ambulance, contact the police department, or guarantee that any external party has received an alert. External SMS notification gateways are simulated. In a genuine life-safety emergency, immediately dial <strong>112</strong> or <strong>100</strong>.
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-bottom">
+      <div>&copy; 2026 SafeCity AI Emergency Module.</div>
+      <div><a href="about.html" style="color: var(--text-muted);">Safety Disclaimer</a></div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/map.js"></script>
+  <script src="js/sos.js"></script>
+</body>
+</html>
+

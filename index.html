@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SafeCity AI — Smart Civic Intelligence & Safer Routes</title>
+  
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Leaflet Maps CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
+  <!-- Core CSS -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="brand">
+        <div class="brand-icon"><i class="fa-solid fa-shield-halved"></i></div>
+        <span>SafeCity <span style="color: var(--accent-cyan);">AI</span></span>
+        <span class="brand-badge">Civic Guard</span>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="index.html" class="nav-link active"><i class="fa-solid fa-house"></i> Home</a></li>
+        <li><a href="report.html" class="nav-link"><i class="fa-solid fa-camera"></i> Report Issue</a></li>
+        <li><a href="route.html" class="nav-link"><i class="fa-solid fa-route"></i> SafeRoute</a></li>
+        <li><a href="heatmap.html" class="nav-link"><i class="fa-solid fa-map"></i> Safety Heatmap</a></li>
+        <li><a href="places.html" class="nav-link"><i class="fa-solid fa-hospital"></i> Safe Places</a></li>
+        <li><a href="track.html" class="nav-link"><i class="fa-solid fa-magnifying-glass"></i> Track</a></li>
+        <li><a href="sos.html" class="nav-link" style="color: #ef4444;"><i class="fa-solid fa-bell"></i> SOS</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <div id="nav-auth-container">
+          <a href="login.html" class="btn btn-sm btn-outline">Log In</a>
+          <a href="signup.html" class="btn btn-sm btn-primary">Sign Up</a>
+        </div>
+        <button class="mobile-menu-btn" aria-label="Toggle navigation"><i class="fa-solid fa-bars"></i></button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="cyber-grid-bg" style="padding: 4.5rem 1.5rem 3.5rem; text-align: center; border-bottom: 1px solid var(--border-color);">
+    <div style="max-width: 940px; margin: 0 auto;">
+      
+      <!-- Live Network Status Pill -->
+      <div style="display: flex; justify-content: center; margin-bottom: 1.5rem;">
+        <div class="live-radar-pill">
+          <span class="radar-dot"></span> Smart Civic Network Live &bull; Active Corridor Monitoring
+        </div>
+      </div>
+      
+      <h1 style="font-size: clamp(2.3rem, 5.5vw, 3.8rem); font-weight: 800; line-height: 1.15; letter-spacing: -0.03em; margin-bottom: 1.25rem;">
+        Smarter Cities. <span style="background: linear-gradient(135deg, #22d3ee, #38bdf8, #818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Safer Journeys.</span><br>Transparent Civic Decisions.
+      </h1>
+
+      <p style="font-size: clamp(1rem, 2vw, 1.2rem); color: var(--text-secondary); max-width: 720px; margin: 0 auto 2.25rem; line-height: 1.65;">
+        Empowering citizens to report infrastructure hazards with visual AI assistance, and recommending safer travel routes with an explainable 7-factor safety formula connected directly to municipal field repairs.
+      </p>
+
+      <!-- Primary CTAs -->
+      <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-bottom: 2rem;">
+        <a href="route.html" class="btn btn-primary btn-lg">
+          <i class="fa-solid fa-route"></i> Open SafeRoute Live Map
+        </a>
+        <a href="report.html" class="btn btn-secondary btn-lg" style="border-color: var(--border-highlight);">
+          <i class="fa-solid fa-camera" style="color: var(--accent-cyan);"></i> Report a City Hazard
+        </a>
+        <a href="officer-dashboard.html" class="btn btn-outline btn-lg">
+          <i class="fa-solid fa-user-shield"></i> Officer Portal
+        </a>
+      </div>
+
+      <!-- Quick Platform Launch Pills -->
+      <div class="quick-nav-bar">
+        <span style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700;">Fast Jump:</span>
+        <a href="route.html" class="quick-nav-pill"><i class="fa-solid fa-route" style="color:var(--accent-cyan);"></i> SafeRoute</a>
+        <a href="report.html" class="quick-nav-pill"><i class="fa-solid fa-camera" style="color:#f59e0b;"></i> Report</a>
+        <a href="heatmap.html" class="quick-nav-pill"><i class="fa-solid fa-map-location-dot" style="color:#38bdf8;"></i> Heatmap</a>
+        <a href="officer-dashboard.html" class="quick-nav-pill"><i class="fa-solid fa-user-shield" style="color:#34d399;"></i> Officer</a>
+        <a href="places.html" class="quick-nav-pill"><i class="fa-solid fa-hospital" style="color:#10b981;"></i> Safe Places</a>
+        <a href="sos.html" class="quick-nav-pill"><i class="fa-solid fa-bell" style="color:#ef4444;"></i> SOS Alert</a>
+      </div>
+
+      <!-- Quick Complaint Tracker Bar -->
+      <div style="max-width: 580px; margin: 0 auto; background: var(--bg-card); border: 1px solid var(--border-highlight); border-radius: var(--radius-lg); padding: 0.5rem; display: flex; gap: 0.5rem; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);">
+        <input type="text" id="hero-track-code" placeholder="Enter Complaint ID (e.g. SC-2026-1001)" style="flex: 1; background: transparent; border: none; padding: 0.65rem 1rem; color: var(--text-primary); font-family: var(--font-mono); font-size: 0.95rem; outline: none;">
+        <button onclick="handleHeroTrack()" class="btn btn-primary btn-sm">
+          <i class="fa-solid fa-magnifying-glass"></i> Track Status
+        </button>
+      </div>
+
+      <!-- Demo Chips -->
+      <div style="display: flex; justify-content: center; align-items: center; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.75rem; font-size: 0.775rem; color: var(--text-muted);">
+        <span>Sample IDs:</span>
+        <button type="button" onclick="setTrackCode('SC-2026-1001')" class="btn btn-sm" style="padding: 0.15rem 0.5rem; font-size: 0.725rem; background: rgba(255,255,255,0.06); border: 1px solid var(--border-subtle); color: var(--accent-cyan);">SC-2026-1001 (Pothole)</button>
+        <button type="button" onclick="setTrackCode('SC-2026-1002')" class="btn btn-sm" style="padding: 0.15rem 0.5rem; font-size: 0.725rem; background: rgba(255,255,255,0.06); border: 1px solid var(--border-subtle); color: #f59e0b;">SC-2026-1002 (Streetlight)</button>
+        <button type="button" onclick="setTrackCode('SC-2026-1004')" class="btn btn-sm" style="padding: 0.15rem 0.5rem; font-size: 0.725rem; background: rgba(255,255,255,0.06); border: 1px solid var(--border-subtle); color: #10b981;">SC-2026-1004 (Fixed)</button>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Live Stats Counter -->
+  <main class="main-content" style="padding-top: 0;">
+    <div class="grid-4" style="margin-bottom: 3.5rem;">
+      <div class="stat-card">
+        <div class="stat-icon cyan"><i class="fa-solid fa-bullhorn"></i></div>
+        <div>
+          <div class="stat-value" id="home-stat-total">6</div>
+          <div class="stat-label">Total Civic Reports</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon yellow"><i class="fa-solid fa-screwdriver-wrench"></i></div>
+        <div>
+          <div class="stat-value" id="home-stat-progress">2</div>
+          <div class="stat-label">Active In-Progress</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon green"><i class="fa-solid fa-circle-check"></i></div>
+        <div>
+          <div class="stat-value" id="home-stat-fixed">2</div>
+          <div class="stat-label">Verified Fixed & Safe</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon cyan"><i class="fa-solid fa-shield-halved"></i></div>
+        <div>
+          <div class="stat-value" id="home-stat-places">6</div>
+          <div class="stat-label">Verified Help Points</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Signature Connected Feature Spotlight -->
+    <div class="card" style="margin-bottom: 3.5rem; background: linear-gradient(135deg, rgba(17, 24, 39, 0.95), rgba(15, 23, 42, 0.9)); border: 1px solid var(--border-highlight); padding: 2.5rem 2rem;">
+      <div style="display: flex; align-items: center; gap: 0.5rem; color: var(--accent-cyan); font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">
+        <i class="fa-solid fa-network-wired"></i> SafeCity Signature Architecture
+      </div>
+      <h2 style="font-size: 1.85rem; font-weight: 800; margin-bottom: 1rem;">
+        How Civic Repairs Directly Recalculate Route Safety
+      </h2>
+      <p style="color: var(--text-secondary); max-width: 780px; margin-bottom: 2rem;">
+        Unlike isolated reporting apps or static map pins, SafeCity AI connects municipal field action to personal safety scores in a verified feedback loop:
+      </p>
+
+      <div class="grid-3" style="margin-bottom: 1.5rem;">
+        <div style="background: var(--bg-surface); padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+          <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--color-danger-bg); color: var(--color-danger); display: flex; align-items: center; justify-content: center; font-weight: 800; margin-bottom: 0.75rem;">1</div>
+          <h4 style="font-size: 1rem; margin-bottom: 0.35rem;">Hazard Reported</h4>
+          <p style="font-size: 0.85rem; color: var(--text-secondary);">Citizen reports a broken streetlight or pothole. Route segment lighting/road factors are penalized.</p>
+        </div>
+        <div style="background: var(--bg-surface); padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+          <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--color-caution-bg); color: var(--color-caution); display: flex; align-items: center; justify-content: center; font-weight: 800; margin-bottom: 0.75rem;">2</div>
+          <h4 style="font-size: 1rem; margin-bottom: 0.35rem;">Officer Verification</h4>
+          <p style="font-size: 0.85rem; color: var(--text-secondary);">Municipal crew repairs the fixture and the officer uploads verifiable after-repair photographic evidence.</p>
+        </div>
+        <div style="background: var(--bg-surface); padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--border-highlight);">
+          <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--color-safe-bg); color: var(--color-safe); display: flex; align-items: center; justify-content: center; font-weight: 800; margin-bottom: 0.75rem;">3</div>
+          <h4 style="font-size: 1rem; margin-bottom: 0.35rem;">Safety Score Updates</h4>
+          <p style="font-size: 0.85rem; color: var(--text-secondary);">The 7-factor engine recalculates corridor scores immediately with a transparent change audit note!</p>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+        <a href="officer-dashboard.html" class="btn btn-outline btn-sm">
+          <i class="fa-solid fa-lock"></i> Explore Municipal Officer Workflow
+        </a>
+        <a href="route.html" class="btn btn-secondary btn-sm">
+          <i class="fa-solid fa-code-compare"></i> Compare Route A & B in SafeRoute
+        </a>
+      </div>
+    </div>
+
+    <!-- Map Preview -->
+    <div class="card" style="margin-bottom: 3.5rem;">
+      <div class="card-header">
+        <div>
+          <h3 class="card-title"><i class="fa-solid fa-map-location-dot" style="color: var(--accent-cyan);"></i> Live City Civic Intelligence Map</h3>
+          <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.2rem;">
+            Real-time geotagged complaints, verified safe help points, and monitored route corridors.
+          </p>
+        </div>
+        <a href="heatmap.html" class="btn btn-sm btn-outline">
+          <i class="fa-solid fa-up-right-from-square"></i> Open Full Heatmap
+        </a>
+      </div>
+      <div class="map-wrapper">
+        <div id="home-map" class="map-element"></div>
+      </div>
+    </div>
+
+    <!-- Complete Platform Directory & Live Testing Hub -->
+    <div style="margin-bottom: 4rem;">
+      <div style="text-align: center; margin-bottom: 2.5rem;">
+        <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(34, 211, 238, 0.1); border: 1px solid var(--border-highlight); padding: 0.35rem 1rem; border-radius: var(--radius-full); font-size: 0.8rem; color: var(--accent-cyan-light); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.75rem;">
+          <i class="fa-solid fa-compass"></i> Complete Architecture Directory
+        </div>
+        <h2 style="font-size: 2.2rem; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 0.75rem;">
+          Explore All 16 Platform Modules & Live Links
+        </h2>
+        <p style="color: var(--text-secondary); max-width: 680px; margin: 0 auto; font-size: 1.05rem;">
+          Every page is 100% functional, connected to MySQL/SQLite PDO, and ready for live presentation and testing.
+        </p>
+      </div>
+
+      <!-- Category 1: Navigation & Safe Travel Suite -->
+      <div style="margin-bottom: 2.5rem;">
+        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem;">
+          <div style="width: 32px; height: 32px; border-radius: 8px; background: rgba(6, 182, 212, 0.15); color: var(--accent-cyan); display: flex; align-items: center; justify-content: center; font-size: 1rem;"><i class="fa-solid fa-route"></i></div>
+          <h3 style="font-size: 1.3rem; font-weight: 800;">1. Safe Navigation & Intelligent Routing</h3>
+        </div>
+        <div class="grid-3" style="gap: 1.25rem;">
+          
+          <div class="card-interactive">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+              <div style="width: 44px; height: 44px; border-radius: 10px; background: rgba(6, 182, 212, 0.12); color: var(--accent-cyan); display: flex; align-items: center; justify-content: center; font-size: 1.25rem;"><i class="fa-solid fa-code-compare"></i></div>
+              <span class="hub-tag" style="color: var(--accent-cyan); border-color: rgba(6, 182, 212, 0.3);">Core Flagship</span>
+            </div>
+            <h4 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.35rem;">SafeRoute: 2-Route Comparison</h4>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 1.25rem; flex: 1;">
+              Compare Route A & B with live Leaflet map, OSM address autocomplete, click-to-pick waypoints, and 7-factor explainable safety score breakdown.
+            </p>
+            <a href="route.html" class="btn btn-primary btn-sm" style="width: 100%;"><i class="fa-solid fa-arrow-up-right-from-square"></i> Open SafeRoute Live</a>
+          </div>
+
+          <div class="card-interactive">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+              <div style="width: 44px; height: 44px; border-radius: 10px; background: rgba(59, 130, 246, 0.12); color: var(--accent-blue); display: flex; align-items: center; justify-content: center; font-size: 1.25rem;"><i class="fa-solid fa-map-location-dot"></i></div>
+              <span class="hub-tag">GIS Heatmap</span>
+            </div>
+            <h4 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.35rem;">City Safety Heatmap</h4>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 1.25rem; flex: 1;">
+              Multi-layer geographic visualization of reported civic hazards, verified emergency help points, and route corridor safety buffers.
+            </p>
+            <a href="heatmap.html" class="btn btn-outline btn-sm" style="width: 100%;"><i class="fa-solid fa-arrow-up-right-from-square"></i> Open Heatmap</a>
+          </div>
+
+          <div class="card-interactive">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+              <div style="width: 44px; height: 44px; border-radius: 10px; background: rgba(16, 185, 129, 0.12); color: var(--color-safe); display: flex; align-items: center; justify-content: center; font-size: 1.25rem;"><i class="fa-solid fa-shield-heart"></i></div>
+              <span class="hub-tag">Live Journey</span>
+            </div>
+            <h4 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.35rem;">Safe Journey Companion</h4>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 1.25rem; flex: 1;">
+              Active journey monitoring with time checks, live progress bar, and expiring secure share link generation for family and friends.
+            </p>
+            <a href="journey.html" class="btn btn-outline btn-sm" style="width: 100%;"><i class="fa-solid fa-arrow-up-right-from-square"></i> Start Safe Journey</a>
+          </div>
+
+          <div class="card-interactive">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+              <div style="width: 44px; height: 44px; border-radius: 10px; background: rgba(168, 85, 247, 0.12); color: #c084fc; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;"><i class="fa-solid fa-share-nodes"></i></div>
+              <span class="hub-tag">Expiring Link</span>
+            </div>
+            <h4 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.35rem;">Shared Journey Viewer</h4>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 1.25rem; flex: 1;">
+              Privacy-preserving public viewer for emergency contacts. Updates in real-time and revokes automatically when journey completes.
+            </p>
+            <a href="shared-journey.html" class="btn btn-outline btn-sm" style="width: 100%;"><i class="fa-solid fa-arrow-up-right-from-square"></i> View Shared Tracker</a>
+          </div>
+
+          <div class="card-interactive">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+              <div style="width: 44px; height: 44px; border-radius: 10px; background: rgba(13, 148, 136, 0.12); color: var(--accent-teal-light); display: flex; align-items: center; justify-content: center; font-size: 1.25rem;"><i class="fa-solid fa-hospital"></i></div>
+              <span class="hub-tag">Emergency Hub</span>
+            </div>
+            <h4 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.35rem;">Nearby Verified Safe Places</h4>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 1.25rem; flex: 1;">
+              Directory of verified 24/7 Police Stations, Hospitals, Metro Stations, and Women Help Desks with distance calculation and instant dial.
+            </p>
+            <a href="places.html" class="btn btn-outline btn-sm" style="width: 100%;"><i class="fa-solid fa-arrow-up-right-from-square"></i> Browse Safe Places</a>
+          </div>
+
+          <div class="card-interactive">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+              <div style="width: 44px; height: 44px; border-radius: 10px; background: rgba(239, 68, 68, 0.12); color: #ef4444; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;"><i class="fa-solid fa-bell"></i></div>
+              <span class="hub-tag" style="color: #ef4444; border-color: rgba(239, 68, 68, 0.3);">Urgent SOS</span>
+            </div>
+            <h4 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.35rem;">SOS Emergency Response</h4>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 1.25rem; flex: 1;">
+              One-click 10s countdown alert, acoustic siren sound synthesizer, live GPS broadcast, and direct call shortcuts for 112, 100 & 1091.
+            </p>
+            <a href="sos.html" class="btn btn-danger btn-sm" style="width: 100%;"><i class="fa-solid fa-triangle-exclamation"></i> Open SOS Alert</a>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Category 2: Smart Civic Complaint Management -->
+      <div style="margin-bottom: 2.5rem;">
+        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem;">
+          <div style="width: 32px; height: 32px; border-radius: 8px; background: rgba(245, 158, 11, 0.15); color: #f59e0b; display: flex; align-items: center; justify-content: center; font-size: 1rem;"><i class="fa-solid fa-bullhorn"></i></div>
+          <h3 style="font-size: 1.3rem; font-weight: 800;">2. Smart Civic Complaints & Public Triage</h3>
+        </div>
+        <div class="grid-3" style="gap: 1.25rem;">
+          
+          <div class="card-interactive">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+              <div style="width: 44px; height: 44px; border-radius: 10px; background: rgba(245, 158, 11, 0.12); color: #f59e0b; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;"><i class="fa-solid fa-camera"></i></div>
+              <span class="hub-tag" style="color: #f59e0b; border-color: rgba(245, 158, 11, 0.3);">AI-Assisted</span>
+            </div>
+            <h4 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.35rem;">Report a City Problem</h4>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 1.25rem; flex: 1;">
+              File geotagged complaints for potholes, streetlights, or drainage. Includes reverse geocoding, severity 1-5 picker, and AI assistant suggestions.
+            </p>
+            <a href="report.html" class="btn btn-primary btn-sm" style="width: 100%;"><i class="fa-solid fa-pen-to-square"></i> File a Complaint</a>
+          </div>
+
+          <div class="card-interactive">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+              <div style="width: 44px; height: 44px; border-radius: 10px; background: rgba(6, 182, 212, 0.12); color: var(--accent-cyan); display: flex; align-items: center; justify-content: center; font-size: 1.25rem;"><i class="fa-solid fa-magnifying-glass-location"></i></div>
+              <span class="hub-tag">Public Tracking</span>
+            </div>
+            <h4 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.35rem;">Complaint Status Tracker</h4>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 1.25rem; flex: 1;">
+              No login required! Enter tracking code (e.g. <code>SC-2026-1001</code>) to see 3-step timeline, resolution notes, and repair photo proof.
+            </p>
+            <a href="track.html?code=SC-2026-1001" class="btn btn-outline btn-sm" style="width: 100%;"><i class="fa-solid fa-arrow-up-right-from-square"></i> Track SC-2026-1001</a>
+          </div>
+
+          <div class="card-interactive">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+              <div style="width: 44px; height: 44px; border-radius: 10px; background: rgba(59, 130, 246, 0.12); color: var(--accent-blue); display: flex; align-items: center; justify-content: center; font-size: 1.25rem;"><i class="fa-solid fa-star-half-stroke"></i></div>
+              <span class="hub-tag">Crowdsource</span>
+            </div>
+            <h4 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.35rem;">Road & Area Ratings</h4>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 1.25rem; flex: 1;">
+              Citizens rate street safety across lighting quality, pavement condition, pedestrian footfall, and police presence with aggregate star averages.
+            </p>
+            <a href="rate.html" class="btn btn-outline btn-sm" style="width: 100%;"><i class="fa-solid fa-arrow-up-right-from-square"></i> Submit Road Rating</a>
+          </div>
+
+          <div class="card-interactive">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+              <div style="width: 44px; height: 44px; border-radius: 10px; background: rgba(16, 185, 129, 0.12); color: var(--color-safe); display: flex; align-items: center; justify-content: center; font-size: 1.25rem;"><i class="fa-solid fa-gauge-high"></i></div>
+              <span class="hub-tag">Citizen Portal</span>
+            </div>
+            <h4 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.35rem;">Citizen Dashboard</h4>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 1.25rem; flex: 1;">
+              Personalized overview for registered citizens: my submitted complaints, active journeys, recent area ratings, and resolution notifications.
+            </p>
+            <a href="dashboard.html" class="btn btn-outline btn-sm" style="width: 100%;"><i class="fa-solid fa-arrow-up-right-from-square"></i> Open Citizen Dashboard</a>
+          </div>
+
+          <div class="card-interactive">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+              <div style="width: 44px; height: 44px; border-radius: 10px; background: rgba(20, 184, 166, 0.12); color: var(--accent-teal-light); display: flex; align-items: center; justify-content: center; font-size: 1.25rem;"><i class="fa-solid fa-user-circle"></i></div>
+              <span class="hub-tag">Settings</span>
+            </div>
+            <h4 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.35rem;">Citizen Profile</h4>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 1.25rem; flex: 1;">
+              Manage emergency contact numbers (for automatic SOS and journey alerts), home address landmark, phone, and account security details.
+            </p>
+            <a href="profile.html" class="btn btn-outline btn-sm" style="width: 100%;"><i class="fa-solid fa-arrow-up-right-from-square"></i> Manage Profile</a>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Category 3: Municipal Operations, Governance & Security -->
+      <div>
+        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem;">
+          <div style="width: 32px; height: 32px; border-radius: 8px; background: rgba(13, 148, 136, 0.15); color: var(--accent-teal-light); display: flex; align-items: center; justify-content: center; font-size: 1rem;"><i class="fa-solid fa-building-columns"></i></div>
+          <h3 style="font-size: 1.3rem; font-weight: 800;">3. Municipal Governance & Authentication Portals</h3>
+        </div>
+        <div class="grid-3" style="gap: 1.25rem;">
+          
+          <div class="card-interactive" style="border-color: rgba(34, 211, 238, 0.35);">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+              <div style="width: 44px; height: 44px; border-radius: 10px; background: rgba(13, 148, 136, 0.2); color: var(--accent-teal-light); display: flex; align-items: center; justify-content: center; font-size: 1.25rem;"><i class="fa-solid fa-user-shield"></i></div>
+              <span class="hub-tag" style="color: #34d399; border-color: rgba(52, 211, 153, 0.3);">Officer Only</span>
+            </div>
+            <h4 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.35rem;">Municipal Officer Console</h4>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 1.25rem; flex: 1;">
+              Official triage workflow: review incoming complaints, assign crews, upload repair photo proof, and trigger <strong>automated route safety recalculation</strong>!
+            </p>
+            <a href="officer-dashboard.html" class="btn btn-primary btn-sm" style="width: 100%;"><i class="fa-solid fa-screwdriver-wrench"></i> Open Officer Console</a>
+          </div>
+
+          <div class="card-interactive">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+              <div style="width: 44px; height: 44px; border-radius: 10px; background: rgba(99, 102, 241, 0.12); color: #818cf8; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;"><i class="fa-solid fa-arrow-right-to-bracket"></i></div>
+              <span class="hub-tag">Auth</span>
+            </div>
+            <h4 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.35rem;">User & Officer Login</h4>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 1.25rem; flex: 1;">
+              Secure session authentication with bcrypt password verification and 1-click demo login buttons for both Citizen and Municipal Officer roles.
+            </p>
+            <a href="login.html" class="btn btn-outline btn-sm" style="width: 100%;"><i class="fa-solid fa-key"></i> Go to Login</a>
+          </div>
+
+          <div class="card-interactive">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+              <div style="width: 44px; height: 44px; border-radius: 10px; background: rgba(59, 130, 246, 0.12); color: var(--accent-blue); display: flex; align-items: center; justify-content: center; font-size: 1.25rem;"><i class="fa-solid fa-user-plus"></i></div>
+              <span class="hub-tag">Registration</span>
+            </div>
+            <h4 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.35rem;">Citizen Signup</h4>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 1.25rem; flex: 1;">
+              New citizen onboarding with input validation, duplicate email prevention, and immediate account provisioning.
+            </p>
+            <a href="signup.html" class="btn btn-outline btn-sm" style="width: 100%;"><i class="fa-solid fa-user-check"></i> Create Account</a>
+          </div>
+
+          <div class="card-interactive">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+              <div style="width: 44px; height: 44px; border-radius: 10px; background: rgba(255, 255, 255, 0.08); color: var(--text-primary); display: flex; align-items: center; justify-content: center; font-size: 1.25rem;"><i class="fa-solid fa-book-open"></i></div>
+              <span class="hub-tag">Documentation</span>
+            </div>
+            <h4 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.35rem;">Methodology & Formula</h4>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 1.25rem; flex: 1;">
+              Full mathematical breakdown of the 7-Factor Safety Equation, factor weight rationale, privacy policies, and civic disclaimer.
+            </p>
+            <a href="about.html" class="btn btn-outline btn-sm" style="width: 100%;"><i class="fa-solid fa-circle-info"></i> View Methodology</a>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-col">
+        <div class="brand" style="margin-bottom: 0.75rem;">
+          <div class="brand-icon"><i class="fa-solid fa-shield-halved"></i></div>
+          <span>SafeCity <span style="color: var(--accent-cyan);">AI</span></span>
+        </div>
+        <p style="font-size: 0.85rem; line-height: 1.6; margin-bottom: 1rem;">
+          Advanced Smart Civic Intelligence & Explainable Personal Safety Navigation platform. Connecting municipal repairs to transparent route safety.
+        </p>
+        <div style="display: flex; gap: 0.75rem; font-size: 1.1rem;">
+          <a href="https://github.com" target="_blank" style="color: var(--text-muted);"><i class="fa-brands fa-github"></i></a>
+          <a href="about.html" style="color: var(--text-muted);"><i class="fa-solid fa-book"></i></a>
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h4>Platform</h4>
+        <ul class="footer-links">
+          <li><a href="report.html" class="footer-link">Report a Problem</a></li>
+          <li><a href="route.html" class="footer-link">SafeRoute Comparison</a></li>
+          <li><a href="heatmap.html" class="footer-link">Safety Heatmap</a></li>
+          <li><a href="track.html" class="footer-link">Track Complaint</a></li>
+          <li><a href="places.html" class="footer-link">Nearby Safe Places</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Portals</h4>
+        <ul class="footer-links">
+          <li><a href="dashboard.html" class="footer-link">Citizen Dashboard</a></li>
+          <li><a href="officer-dashboard.html" class="footer-link">Officer Dashboard</a></li>
+          <li><a href="rate.html" class="footer-link">Rate Roads & Areas</a></li>
+          <li><a href="sos.html" class="footer-link">SOS Emergency</a></li>
+          <li><a href="about.html" class="footer-link">Methodology & Formula</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Emergency Numbers (India)</h4>
+        <div style="background: var(--bg-surface); padding: 0.85rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); font-size: 0.825rem; line-height: 1.7;">
+          <div><strong style="color: var(--accent-cyan);">112</strong> — National Emergency</div>
+          <div><strong style="color: #3b82f6;">100</strong> — Police Helpline</div>
+          <div><strong style="color: #ec4899;">1091</strong> — Women in Distress</div>
+          <div><strong style="color: #ef4444;">108</strong> — Medical Ambulance</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div>&copy; 2026 SafeCity AI Platform. Built with PHP 8, MySQL & Leaflet.js. Open Source Civic Tech.</div>
+      <div>
+        <a href="about.html" style="color: var(--text-muted); text-decoration: none; margin-right: 1rem;">Safety Disclaimer</a>
+        <a href="about.html#privacy" style="color: var(--text-muted); text-decoration: none;">Privacy Policy</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/map.js"></script>
+
+  <script>
+    function handleHeroTrack() {
+      const code = document.getElementById('hero-track-code').value.trim();
+      if (!code) {
+        SafeCity.showToast('Please enter a Complaint Code (e.g. SC-2026-1001).', 'warning');
+        return;
+      }
+      window.location.href = `track.html?code=${encodeURIComponent(code)}`;
+    }
+
+    function setTrackCode(code) {
+      const input = document.getElementById('hero-track-code');
+      if (input) {
+        input.value = code;
+        handleHeroTrack();
+      }
+    }
+
+    // Initialize Home Map Preview & Real Stats
+    document.addEventListener('DOMContentLoaded', async () => {
+      // 1. Fetch real stats
+      try {
+        const statsRes = await API.get('php/get_dashboard_stats.php');
+        const m = statsRes.data.metrics;
+        document.getElementById('home-stat-total').textContent = m.total_complaints;
+        document.getElementById('home-stat-progress').textContent = m.in_progress;
+        document.getElementById('home-stat-fixed').textContent = m.fixed_complaints;
+        document.getElementById('home-stat-places').textContent = m.safe_places_count;
+      } catch (e) {
+        console.warn('Stats fetch notice:', e);
+      }
+
+      // 2. Initialize preview map
+      const homeMap = SafeMap.create('home-map', [12.9780, 77.6070], 13);
+      if (homeMap) {
+        try {
+          const compRes = await API.get('php/get_complaints.php', { limit: 10 });
+          compRes.data.complaints.forEach(c => {
+            if (c.latitude && c.longitude) {
+              const icon = SafeMap.createMarkerIcon(SafeMap.getCategoryColor(c.category), SafeMap.getCategoryIcon(c.category));
+              L.marker([c.latitude, c.longitude], { icon })
+                .addTo(homeMap)
+                .bindPopup(`<strong>${SafeCity.escape(c.title)}</strong><br>Category: ${SafeCity.getCategoryLabel(c.category)}<br><a href="track.html?code=${c.complaint_code}">Track</a>`);
+            }
+          });
+
+          // Draw Route A
+          const routeRes = await API.get('php/get_routes.php');
+          routeRes.data.routes.forEach(r => {
+            const color = (r.route_name === 'Route A') ? '#06b6d4' : '#f59e0b';
+            L.polyline(r.coordinates, { color, weight: 4, opacity: 0.7 }).addTo(homeMap);
+          });
+        } catch (e) {
+          console.warn('Map preview data notice:', e);
+        }
+      }
+    });
+  </script>
+</body>
+</html>
+

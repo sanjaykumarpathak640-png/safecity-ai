@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About, Methodology & Safety Disclaimer — SafeCity AI</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="brand">
+        <div class="brand-icon"><i class="fa-solid fa-shield-halved"></i></div>
+        <span>SafeCity <span style="color: var(--accent-cyan);">AI</span></span>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="index.html" class="nav-link"><i class="fa-solid fa-house"></i> Home</a></li>
+        <li><a href="report.html" class="nav-link"><i class="fa-solid fa-camera"></i> Report Issue</a></li>
+        <li><a href="route.html" class="nav-link"><i class="fa-solid fa-route"></i> SafeRoute</a></li>
+        <li><a href="heatmap.html" class="nav-link"><i class="fa-solid fa-map"></i> Safety Heatmap</a></li>
+        <li><a href="places.html" class="nav-link"><i class="fa-solid fa-hospital"></i> Safe Places</a></li>
+        <li><a href="about.html" class="nav-link active"><i class="fa-solid fa-book"></i> About</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <div id="nav-auth-container"></div>
+        <button class="mobile-menu-btn" aria-label="Toggle navigation"><i class="fa-solid fa-bars"></i></button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content" style="max-width: 860px;">
+    
+    <div class="page-header" style="text-align: center; margin-bottom: 2.5rem;">
+      <h1 class="page-title" style="justify-content: center;">
+        <i class="fa-solid fa-shield-halved" style="color: var(--accent-cyan);"></i> About SafeCity AI
+      </h1>
+      <p class="page-subtitle">Methodology, transparent scoring weights, cybersecurity architecture, and safety disclaimers</p>
+    </div>
+
+    <!-- Product Vision -->
+    <div class="card" style="margin-bottom: 2rem;">
+      <h2 style="font-size: 1.35rem; font-weight: 700; margin-bottom: 0.75rem; color: var(--accent-cyan-light);">
+        1. Connected Civic & Personal Safety Vision
+      </h2>
+      <p style="color: var(--text-secondary); line-height: 1.7; margin-bottom: 1rem;">
+        <strong>SafeCity AI</strong> bridges the gap between municipal infrastructure maintenance and personal navigation safety. Built as a full-stack smart-city application, the platform unites:
+      </p>
+      <ul style="padding-left: 1.5rem; color: var(--text-secondary); line-height: 1.7; margin-bottom: 1rem;">
+        <li><strong>AI-Powered Visual Civic Complaint Management:</strong> Citizens report potholes, dark streetlights, drainage hazards, and sidewalk impediments with geotagging and photographic evidence.</li>
+        <li><strong>HERGUARD-Style Explainable Route Recommendation:</strong> Recommends safer travel routes based on transparent, data-backed factors rather than opaque black-box assertions.</li>
+        <li><strong>The Connected Feedback Loop:</strong> Verified municipal repair records directly recalculate route safety scores in real time, demonstrating measurable civic ROI.</li>
+      </ul>
+    </div>
+
+    <!-- 7-Factor Formula -->
+    <div class="card" style="margin-bottom: 2rem;">
+      <h2 style="font-size: 1.35rem; font-weight: 700; margin-bottom: 0.75rem; color: var(--accent-cyan-light);">
+        2. Explainable 7-Factor Safety Score Engine
+      </h2>
+      <p style="color: var(--text-secondary); line-height: 1.7; margin-bottom: 1.25rem;">
+        Each corridor segment is normalized from 0 to 100 across 7 transparent dimensions, aggregated across total route length:
+      </p>
+
+      <div style="background: var(--bg-surface); padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); font-family: var(--font-mono); font-size: 0.9rem; line-height: 1.8; margin-bottom: 1.5rem; color: var(--accent-cyan);">
+        Safety Score = (Lighting × 0.20) + (Crowd × 0.15) + (Incident History × 0.25) + (Help Access × 0.15) + (Time Factor × 0.10) + (Road Condition × 0.10) + (Community Signal × 0.05)
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+        <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--border-subtle);">
+          <span><strong>Lighting Quality (20%):</strong> Fixture functionality and absence of dark blackout spans.</span>
+          <span style="font-family: var(--font-mono); color: var(--accent-cyan);">0.20</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--border-subtle);">
+          <span><strong>Incident-History Signal (25%):</strong> Historical civic incident reports and safety frequency index.</span>
+          <span style="font-family: var(--font-mono); color: var(--accent-cyan);">0.25</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--border-subtle);">
+          <span><strong>Crowd Activity (15%):</strong> Pedestrian flow, open retail businesses, and transit hub proximity.</span>
+          <span style="font-family: var(--font-mono); color: var(--accent-cyan);">0.15</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--border-subtle);">
+          <span><strong>Proximity to Help Points (15%):</strong> Distance buffer to police stations, 24/7 hospitals, and kiosks.</span>
+          <span style="font-family: var(--font-mono); color: var(--accent-cyan);">0.15</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--border-subtle);">
+          <span><strong>Time-Related Factor (10%):</strong> Dynamic adjustment for daylight vs late-night isolation.</span>
+          <span style="font-family: var(--font-mono); color: var(--accent-cyan);">0.10</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--border-subtle);">
+          <span><strong>Road Condition (10%):</strong> Asphalt smoothness, sidewalk integrity, and absence of open potholes.</span>
+          <span style="font-family: var(--font-mono); color: var(--accent-cyan);">0.10</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; padding: 0.5rem 0;">
+          <span><strong>Approved Community Reports (5%):</strong> Moderated resident reviews and star assessments.</span>
+          <span style="font-family: var(--font-mono); color: var(--accent-cyan);">0.05</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Security & Privacy Architecture -->
+    <div id="privacy" class="card" style="margin-bottom: 2rem;">
+      <h2 style="font-size: 1.35rem; font-weight: 700; margin-bottom: 0.75rem; color: var(--accent-cyan-light);">
+        3. Cybersecurity & Data Privacy Standards
+      </h2>
+      <ul style="padding-left: 1.5rem; color: var(--text-secondary); line-height: 1.7;">
+        <li><strong>Prepared Statements:</strong> 100% of database queries use PDO parameterized queries, preventing SQL injection.</li>
+        <li><strong>Password Protection:</strong> Passwords hashed with standard <code>password_hash(PASSWORD_BCRYPT)</code>.</li>
+        <li><strong>Session Hardening:</strong> Secure PHP sessions with <code>httponly</code>, <code>SameSite=Lax</code>, and session ID regeneration.</li>
+        <li><strong>Scrubbed Public Tracking:</strong> The public <code>php/get_status.php</code> endpoint strips citizen email, phone, and account details.</li>
+        <li><strong>Upload Sanitization:</strong> MIME-type verification with <code>finfo</code>, cryptographically safe random filenames, size limits, and script execution prevention via <code>uploads/.htaccess</code>.</li>
+        <li><strong>Temporary Share Tokens:</strong> Safe Journey share links use 192-bit secure random tokens that expire in 3 hours and can be revoked at any time.</li>
+      </ul>
+    </div>
+
+    <!-- Prominent Disclaimer -->
+    <div class="card" style="border: 2px solid rgba(239, 68, 68, 0.4); background: rgba(239, 68, 68, 0.04); margin-bottom: 2.5rem; padding: 2rem;">
+      <div style="display: flex; align-items: center; gap: 0.75rem; color: var(--color-danger); font-size: 1.25rem; font-weight: 800; margin-bottom: 0.75rem;">
+        <i class="fa-solid fa-triangle-exclamation"></i> Official Safety Disclaimer
+      </div>
+      <p style="color: #fca5a5; line-height: 1.7; font-size: 0.925rem; margin-bottom: 1rem;">
+        <strong>SafeCity AI is an engineering and civic demonstration prototype.</strong> Safety scores and classifications represent relative reported infrastructure conditions, illumination quality, and civic maintenance status.
+      </p>
+      <ul style="padding-left: 1.5rem; color: #fca5a5; font-size: 0.9rem; line-height: 1.7;">
+        <li>The system does <strong>NOT</strong> predict criminality, identify suspects, or evaluate individuals.</li>
+        <li>A higher score indicates more favorable reported infrastructure signals; it does <strong>NOT</strong> guarantee personal safety or immune travel.</li>
+        <li>Logging an SOS alert in this database does <strong>NOT</strong> dispatch emergency services. In any real emergency, immediately dial <strong>112</strong> or <strong>100</strong>.</li>
+      </ul>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-bottom">
+      <div>&copy; 2026 SafeCity AI Platform.</div>
+      <div>Open Source Civic Technology.</div>
+    </div>
+  </footer>
+
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
+

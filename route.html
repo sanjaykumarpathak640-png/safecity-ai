@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SafeRoute — Two-Route Safety Comparison — SafeCity AI</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="brand">
+        <div class="brand-icon"><i class="fa-solid fa-shield-halved"></i></div>
+        <span>SafeCity <span style="color: var(--accent-cyan);">AI</span></span>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="index.html" class="nav-link"><i class="fa-solid fa-house"></i> Home</a></li>
+        <li><a href="report.html" class="nav-link"><i class="fa-solid fa-camera"></i> Report Issue</a></li>
+        <li><a href="route.html" class="nav-link active"><i class="fa-solid fa-route"></i> SafeRoute</a></li>
+        <li><a href="heatmap.html" class="nav-link"><i class="fa-solid fa-map"></i> Safety Heatmap</a></li>
+        <li><a href="places.html" class="nav-link"><i class="fa-solid fa-hospital"></i> Safe Places</a></li>
+        <li><a href="track.html" class="nav-link"><i class="fa-solid fa-magnifying-glass"></i> Track</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <div id="nav-auth-container"></div>
+        <button class="mobile-menu-btn" aria-label="Toggle navigation"><i class="fa-solid fa-bars"></i></button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Routing Container -->
+  <main class="main-content">
+    <div class="page-header" style="margin-bottom: 1.5rem;">
+      <h1 class="page-title"><i class="fa-solid fa-route" style="color: var(--accent-cyan);"></i> SafeRoute: Two-Route Comparison</h1>
+      <p class="page-subtitle">Compare journey corridors using explainable 7-factor weighted safety scoring dynamically connected to civic repairs</p>
+    </div>
+
+    <!-- Search Controls Card -->
+    <div class="card" style="margin-bottom: 2rem;">
+      <form id="route-search-form" class="grid-3" style="align-items: flex-end; gap: 1rem;">
+        <div class="form-group" style="margin: 0; position: relative;">
+          <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.35rem;">
+            <label class="form-label" style="margin: 0;">Start Location</label>
+            <div style="display: flex; gap: 0.35rem;">
+              <button type="button" id="btn-pick-origin-map" class="btn btn-sm btn-outline" style="padding: 0.15rem 0.5rem; font-size: 0.725rem;" title="Click on map to select start">
+                <i class="fa-solid fa-map-pin"></i> Pick on Map
+              </button>
+              <button type="button" id="btn-route-curr-loc" class="btn btn-sm btn-outline" style="padding: 0.15rem 0.5rem; font-size: 0.725rem;">
+                <i class="fa-solid fa-location-crosshairs"></i> GPS
+              </button>
+            </div>
+          </div>
+          <input type="text" id="route-origin" class="form-input" value="Metro Central Station" placeholder="Type city address or landmark..." autocomplete="off">
+          <div id="origin-autocomplete" class="autocomplete-dropdown" style="display: none;"></div>
+        </div>
+
+        <div class="form-group" style="margin: 0; position: relative;">
+          <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.35rem;">
+            <label class="form-label" style="margin-bottom: 0.35rem;">Destination</label>
+            <button type="button" id="btn-pick-dest-map" class="btn btn-sm btn-outline" style="padding: 0.15rem 0.5rem; font-size: 0.725rem;" title="Click on map to select destination">
+              <i class="fa-solid fa-map-pin"></i> Pick on Map
+            </button>
+          </div>
+          <input type="text" id="route-destination" class="form-input" value="Tech Innovation Hub" placeholder="Type destination address..." autocomplete="off">
+          <div id="dest-autocomplete" class="autocomplete-dropdown" style="display: none;"></div>
+        </div>
+
+        <div style="margin: 0;">
+          <button type="submit" id="btn-compare" class="btn btn-primary" style="width: 100%; padding: 0.75rem;">
+            <i class="fa-solid fa-code-compare"></i> Compare Route Safety
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Interactive Routing Map -->
+    <div class="card" style="margin-bottom: 2rem; padding: 1rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; padding: 0 0.5rem;">
+        <div style="display: flex; align-items: center; gap: 1.5rem; font-size: 0.85rem;">
+          <div style="display: flex; align-items: center; gap: 0.4rem;">
+            <div style="width: 18px; height: 5px; background: #06b6d4; border-radius: 3px;"></div>
+            <strong>Route A: Recommended Corridor</strong>
+          </div>
+          <div style="display: flex; align-items: center; gap: 0.4rem;">
+            <div style="width: 18px; height: 5px; background: #f59e0b; border-radius: 3px;"></div>
+            <strong>Route B: Alternate Corridor</strong>
+          </div>
+        </div>
+        <span id="routing-status-badge" class="badge badge-low"><i class="fa-solid fa-circle-info"></i> Interactive Leaflet Navigation</span>
+      </div>
+
+      <div class="map-wrapper">
+        <div id="route-map" class="map-element" style="height: 440px;"></div>
+      </div>
+    </div>
+
+    <!-- Side-by-Side Route Comparison Cards -->
+    <div id="route-comparison-cards" class="grid-2" style="margin-bottom: 2rem;">
+      <!-- Populated dynamically by js/route.js -->
+    </div>
+
+    <!-- Transparent Formula Explanation Banner -->
+    <div class="demo-disclaimer-box" style="margin-bottom: 2rem;">
+      <i class="fa-solid fa-scale-balanced" style="font-size: 1.5rem; flex-shrink: 0; color: #f59e0b;"></i>
+      <div style="font-size: 0.85rem; line-height: 1.6;">
+        <strong>Transparent Safety Engine Formula:</strong><br>
+        <code>Safety Score = (Lighting × 20%) + (Crowd × 15%) + (Incident History × 25%) + (Help Access × 15%) + (Time Factor × 10%) + (Road Condition × 10%) + (Community Signal × 5%)</code><br>
+        Higher scores indicate more favorable reported municipal infrastructure conditions in this prototype corridor. The engine does NOT predict crime or evaluate individual persons.
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-bottom">
+      <div>&copy; 2026 SafeCity AI SafeRoute Engine.</div>
+      <div><a href="about.html" style="color: var(--text-muted);">Methodology & Weights</a></div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/map.js"></script>
+  <script src="js/safety-score.js"></script>
+  <script src="js/route.js"></script>
+</body>
+</html>
+
