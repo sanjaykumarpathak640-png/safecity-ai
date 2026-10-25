@@ -92,9 +92,32 @@
 
     <!-- My Reported Complaints Table -->
     <div class="card" style="margin-bottom: 2.5rem;">
-      <div class="card-header">
-        <h3 class="card-title"><i class="fa-solid fa-list-check" style="color: var(--accent-cyan);"></i> My Civic Complaints</h3>
-        <a href="report.html" class="btn btn-sm btn-outline">+ File New Complaint</a>
+      <div class="card-header" style="flex-wrap: wrap; gap: 0.75rem;">
+        <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+          <h3 class="card-title" style="margin: 0;"><i class="fa-solid fa-list-check" style="color: var(--accent-cyan);"></i> Civic Complaints Feed</h3>
+          <div style="display: inline-flex; background: var(--bg-surface); padding: 3px; border-radius: var(--radius-sm); border: 1px solid var(--border-color); gap: 4px;">
+            <button type="button" id="tab-btn-my" class="btn btn-sm btn-primary" style="padding: 0.25rem 0.75rem; font-size: 0.8rem;">
+              <i class="fa-solid fa-user-check"></i> My Reports (<span id="badge-my-count">0</span>)
+            </button>
+            <button type="button" id="tab-btn-all" class="btn btn-sm btn-secondary" style="padding: 0.25rem 0.75rem; font-size: 0.8rem;">
+              <i class="fa-solid fa-city"></i> All City Reports (<span id="badge-all-count">0</span>)
+            </button>
+          </div>
+        </div>
+        <div style="display: flex; gap: 0.5rem;">
+          <button type="button" id="btn-refresh-dashboard" class="btn btn-sm btn-outline" title="Refresh Live Data">
+            <i class="fa-solid fa-rotate"></i> Refresh
+          </button>
+          <a href="report.html" class="btn btn-sm btn-primary">+ File New Complaint</a>
+        </div>
+      </div>
+
+      <div id="guest-notice-banner" style="display: none; padding: 0.75rem 1.25rem; background: rgba(6, 182, 212, 0.08); border-bottom: 1px solid var(--border-color); font-size: 0.825rem; color: var(--text-secondary); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
+        <div>
+          <i class="fa-solid fa-circle-info" style="color: var(--accent-cyan);"></i>
+          <strong>Citizen Live Feed:</strong> Tracking complaints submitted from this browser & active city municipal channels.
+        </div>
+        <a href="login.html?redirect=dashboard.html" style="color: var(--accent-cyan); font-weight: 600; text-decoration: underline;">Sign In for Registered Profile &rarr;</a>
       </div>
 
       <div style="overflow-x: auto;">

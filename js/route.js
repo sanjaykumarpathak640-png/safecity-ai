@@ -17,6 +17,44 @@ let destCoords = { lat: 12.9930, lng: 77.6200, label: 'Tech Innovation Hub' };
 let isMapPickMode = null; // 'origin' or 'destination'
 
 document.addEventListener('DOMContentLoaded', () => {
+  // Check URL parameters for direct routing to safe places or custom destinations
+  const urlParams = new URLSearchParams(window.location.search);
+  const destLat = parseFloat(urlParams.get('dest_lat'));
+  const destLng = parseFloat(urlParams.get('dest_lng'));
+  const destName = urlParams.get('dest');
+
+  const originLat = parseFloat(urlParams.get('origin_lat'));
+  const originLng = parseFloat(urlParams.get('origin_lng'));
+  const originName = urlParams.get('origin');
+
+  if (!isNaN(destLat) && !isNaN(destLng)) {
+    destCoords = {
+      lat: destLat,
+      lng: destLng,
+      label: destName || 'Selected Safe Destination'
+    };
+    const destInput = document.getElementById('route-destination');
+    if (destInput) destInput.value = destCoords.label;
+
+    if (!isNaN(originLat) && !isNaN(originLng)) {
+      originCoords = {
+        lat: originLat,
+        lng: originLng,
+        label: originName || 'Starting Location'
+      };
+      const origInput = document.getElementById('route-origin');
+      if (origInput) origInput.value = originCoords.label;
+    } else {
+      originCoords = {
+        lat: destLat - 0.012,
+        lng: destLng - 0.014,
+        label: 'Current Commuter Origin'
+      };
+      const origInput = document.getElementById('route-origin');
+      if (origInput) origInput.value = originCoords.label;
+    }
+  }
+
   initRouteMap();
   initAutocomplete('route-origin', 'origin-autocomplete', (item) => {
     originCoords = { lat: parseFloat(item.lat), lng: parseFloat(item.lon), label: item.display_name };

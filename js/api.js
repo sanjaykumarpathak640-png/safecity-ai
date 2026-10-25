@@ -1,6 +1,7 @@
 /**
- * SafeCity AI - Central API Client with Automatic Static/GitHub Pages Fallback Adapter
- * Standardized Fetch API wrapper with CSRF injection, offline data simulation, and localStorage persistence.
+ * SafeCity AI - Central API Client with Full Session & Standalone Adapter
+ * Standardized Fetch API wrapper with credentials: 'include', CSRF injection,
+ * and reliable dual-mode persistence (MySQL/SQLite PDO + localStorage sync).
  */
 
 const API = {
@@ -242,20 +243,80 @@ const API = {
       headers['Content-Type'] = 'application/json';
     }
 
+    // Always include credentials so PHP session cookies persist
+    const fetchOptions = {
+      ...options,
+      headers,
+      credentials: 'include'
+    };
+
     // Attempt real PHP backend fetch
     try {
-      const response = await fetch(url, { ...options, headers });
+      const response = await fetch(url, fetchOptions);
       if (response.ok) {
         const text = await response.text();
         try {
           const data = JSON.parse(text);
-          if (data && typeof data === 'object') return data;
+          if (data && typeof data === 'object') {
+            // If saving complaint, also mirror into localStorage for instant dashboard sync
+            if (endpoint.includes('save_complaint.php') && data.success && data.data) {
+              this.mirrorComplaintLocally(options.body, data.data.complaint_code);
+            }
+            return data;
+          }
         } catch (jsonErr) {}
+      } else if (response.status !== 404 && response.status !== 405) {
+        // Try parsing JSON error from PHP
+        try {
+          const errData = await response.json();
+          if (errData && errData.message) {
+            const err = new Error(errData.message);
+            err.status = response.status;
+            throw err;
+          }
+        } catch (e) {
+          if (e.status) throw e;
+        }
       }
-    } catch (netErr) {}
+    } catch (netErr) {
+      if (netErr.status && netErr.status !== 404 && netErr.status !== 405) {
+        throw netErr;
+      }
+    }
 
     // Fallback: Seamless client-side adapter for GitHub Pages / Static Hosting
     return this.fallbackHandler(endpoint, options);
+  },
+
+  mirrorComplaintLocally(body, code) {
+    try {
+      let b = {};
+      if (body instanceof FormData) {
+        b = Object.fromEntries(body.entries());
+      } else if (typeof body === 'string') {
+        b = JSON.parse(body);
+      }
+      const myComplaints = this.getStored('my_complaints', []);
+      const item = {
+        id: myComplaints.length + 1,
+        complaint_code: code,
+        category: b.category || 'pothole',
+        title: b.title || 'Reported Civic Issue',
+        description: b.description || 'Observed infrastructure issue.',
+        latitude: parseFloat(b.latitude) || 12.9738,
+        longitude: parseFloat(b.longitude) || 77.6055,
+        address: b.address || 'Selected Location',
+        severity: parseInt(b.severity) || 3,
+        priority_score: 75,
+        priority_level: 'High',
+        photo_path: 'assets/demo_pothole.jpg',
+        status: 'pending',
+        department: 'Municipal Operations',
+        created_at: new Date().toISOString().replace('T', ' ').substring(0, 19)
+      };
+      myComplaints.unshift(item);
+      this.setStored('my_complaints', myComplaints);
+    } catch (e) {}
   },
 
   fallbackHandler(endpoint, options) {
@@ -289,7 +350,7 @@ const API = {
       this.setStored('current_user', u);
       return {
         success: true,
-        message: 'Login successful (Static Session Mode)',
+        message: 'Login successful',
         data: { user: u }
       };
     }
@@ -302,7 +363,7 @@ const API = {
 
     // 4. Dashboard Stats
     if (cleanEp === 'get_dashboard_stats.php') {
-      const complaints = this.getStored('complaints', this.seed.complaints);
+      const complaints = this.getAllComplaintsMerged();
       const total = complaints.length;
       const pending = complaints.filter(c => c.status === 'pending').length;
       const inProg = complaints.filter(c => c.status === 'in_progress').length;
@@ -348,18 +409,23 @@ const API = {
 
     // 6. Get Complaints
     if (cleanEp === 'get_complaints.php') {
-      const complaints = this.getStored('complaints', this.seed.complaints);
+      const userOnly = urlParams.get('user_only') === '1';
+      const myComplaints = this.getStored('my_complaints', []);
+      const allComplaints = this.getAllComplaintsMerged();
+
+      const resultList = (userOnly && myComplaints.length > 0) ? myComplaints : allComplaints;
+
       return {
         success: true,
-        data: { complaints: complaints, total: complaints.length }
+        data: { complaints: resultList, total: resultList.length }
       };
     }
 
     // 7. Get Status / Tracking
     if (cleanEp === 'get_status.php') {
       const code = urlParams.get('code') || 'SC-2026-1001';
-      const complaints = this.getStored('complaints', this.seed.complaints);
-      const c = complaints.find(item => item.complaint_code.toUpperCase() === code.toUpperCase()) || complaints[0];
+      const allComplaints = this.getAllComplaintsMerged();
+      const c = allComplaints.find(item => item.complaint_code.toUpperCase() === code.toUpperCase()) || allComplaints[0];
       return {
         success: true,
         data: {
@@ -394,6 +460,8 @@ const API = {
 
       const randomCode = 'SC-2026-' + Math.floor(1000 + Math.random() * 9000);
       const complaints = this.getStored('complaints', this.seed.complaints);
+      const myComplaints = this.getStored('my_complaints', []);
+
       const newC = {
         id: complaints.length + 1,
         complaint_code: randomCode,
@@ -405,6 +473,7 @@ const API = {
         address: b.address || 'Selected Street Location',
         severity: parseInt(b.severity) || 3,
         priority_score: 75,
+        priority_level: 'High',
         status: 'pending',
         photo_path: 'assets/demo_pothole.jpg',
         created_at: new Date().toISOString().replace('T', ' ').substring(0, 19),
@@ -414,7 +483,9 @@ const API = {
       };
 
       complaints.unshift(newC);
+      myComplaints.unshift(newC);
       this.setStored('complaints', complaints);
+      this.setStored('my_complaints', myComplaints);
 
       return {
         success: true,
@@ -434,7 +505,7 @@ const API = {
 
       const cId = parseInt(b.complaint_id) || 1;
       const newStatus = b.status || 'fixed';
-      const complaints = this.getStored('complaints', this.seed.complaints);
+      const complaints = this.getAllComplaintsMerged();
       const c = complaints.find(item => item.id === cId) || complaints[0];
 
       c.status = newStatus;
@@ -486,6 +557,18 @@ const API = {
 
     // Default generic fallback
     return { success: true, message: 'Operation successful', data: {} };
+  },
+
+  getAllComplaintsMerged() {
+    const all = this.getStored('complaints', this.seed.complaints);
+    const mine = this.getStored('my_complaints', []);
+    const merged = [...mine];
+    all.forEach(item => {
+      if (!merged.find(m => m.complaint_code === item.complaint_code)) {
+        merged.push(item);
+      }
+    });
+    return merged;
   },
 
   get(endpoint, params = {}) {

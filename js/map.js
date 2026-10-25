@@ -77,8 +77,9 @@ const SafeMap = {
       police: '#3b82f6',
       hospital: '#ef4444',
       women_help: '#ec4899',
+      pharmacy: '#10b981',
       fire_station: '#f97316',
-      emergency_kiosk: '#10b981'
+      emergency_kiosk: '#06b6d4'
     };
     return colors[type] || '#06b6d4';
   },
@@ -88,10 +89,23 @@ const SafeMap = {
       police: 'fa-shield-halved',
       hospital: 'fa-hospital',
       women_help: 'fa-person-shelter',
+      pharmacy: 'fa-briefcase-medical',
       fire_station: 'fa-fire-extinguisher',
       emergency_kiosk: 'fa-phone-volume'
     };
     return icons[type] || 'fa-building';
+  },
+
+  getPlaceLabel(type) {
+    const labels = {
+      police: 'Police Station',
+      hospital: '24/7 Hospital / Trauma',
+      women_help: 'Women Safety Booth',
+      pharmacy: '24/7 Pharmacy / Chemist',
+      fire_station: 'Fire & Rescue Station',
+      emergency_kiosk: 'Emergency Help Kiosk'
+    };
+    return labels[type] || 'Public Safe Hub';
   },
 
   getUserLocation() {

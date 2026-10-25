@@ -43,26 +43,74 @@
 
   <!-- Main Places Workspace -->
   <main class="main-content">
-    <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;">
       <div>
         <h1 class="page-title"><i class="fa-solid fa-hospital-user" style="color: var(--accent-cyan);"></i> Verified Public Safe Places</h1>
-        <p class="page-subtitle">Locate verified municipal police stations, 24/7 hospitals, women safety kiosks, and emergency help points</p>
+        <p class="page-subtitle">Locate verified municipal police stations, 24/7 emergency hospitals, women safety kiosks, and help points anywhere</p>
       </div>
-      <div>
+      <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
         <button type="button" id="btn-places-loc" class="btn btn-primary">
-          <i class="fa-solid fa-location-crosshairs"></i> Recalculate Distance from GPS
+          <i class="fa-solid fa-location-crosshairs"></i> Use My GPS Location
         </button>
+      </div>
+    </div>
+
+    <!-- Universal Location Search & Preset Cities Bar -->
+    <div class="card" style="margin-bottom: 1.5rem; padding: 1.25rem;">
+      <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center; margin-bottom: 1rem;">
+        <div style="flex: 1; min-width: 280px; position: relative;">
+          <div style="position: relative;">
+            <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-muted);"></i>
+            <input type="text" id="places-search-input" class="form-input" style="padding-left: 2.5rem;" placeholder="Search any city, neighborhood, or landmark (e.g. Connaught Place Delhi, Patna, Bangalore, Bandra)..." autocomplete="off">
+            <button type="button" id="btn-places-search-clear" style="display: none; position: absolute; right: 0.75rem; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--text-muted); cursor: pointer;"><i class="fa-solid fa-xmark"></i></button>
+          </div>
+          <div id="places-search-dropdown" class="autocomplete-dropdown" style="display: none;"></div>
+        </div>
+
+        <div style="display: flex; gap: 0.5rem; align-items: center;">
+          <label style="font-size: 0.85rem; color: var(--text-muted); white-space: nowrap;"><i class="fa-solid fa-bullseye"></i> Radius:</label>
+          <select id="places-radius-select" class="form-select" style="width: auto; padding: 0.5rem 0.75rem; font-size: 0.875rem;">
+            <option value="3000">3 km</option>
+            <option value="5000" selected>5 km</option>
+            <option value="10000">10 km</option>
+            <option value="20000">20 km</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Quick City Selector Pills -->
+      <div style="display: flex; gap: 0.4rem; flex-wrap: wrap; align-items: center;">
+        <span style="font-size: 0.775rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; margin-right: 0.25rem;">Quick Select:</span>
+        <button type="button" class="btn btn-sm btn-outline city-preset-btn active" data-city="Bengaluru" data-lat="12.9716" data-lng="77.5946">Bengaluru</button>
+        <button type="button" class="btn btn-sm btn-outline city-preset-btn" data-city="Delhi NCR" data-lat="28.6139" data-lng="77.2090">Delhi NCR</button>
+        <button type="button" class="btn btn-sm btn-outline city-preset-btn" data-city="Mumbai" data-lat="19.0760" data-lng="72.8777">Mumbai</button>
+        <button type="button" class="btn btn-sm btn-outline city-preset-btn" data-city="Patna" data-lat="25.5941" data-lng="85.1376">Patna</button>
+        <button type="button" class="btn btn-sm btn-outline city-preset-btn" data-city="Hyderabad" data-lat="17.3850" data-lng="78.4867">Hyderabad</button>
+        <button type="button" class="btn btn-sm btn-outline city-preset-btn" data-city="Kolkata" data-lat="22.5726" data-lng="88.3639">Kolkata</button>
+        <button type="button" class="btn btn-sm btn-outline city-preset-btn" data-city="Pune" data-lat="18.5204" data-lng="73.8567">Pune</button>
+        <button type="button" class="btn btn-sm btn-outline city-preset-btn" data-city="Jaipur" data-lat="26.9124" data-lng="75.7873">Jaipur</button>
+      </div>
+
+      <!-- Current Location Status Pill -->
+      <div id="active-location-pill" style="margin-top: 0.75rem; padding: 0.5rem 0.85rem; background: var(--bg-surface); border-radius: var(--radius-sm); border: 1px solid var(--border-color); font-size: 0.825rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
+        <div>
+          <i class="fa-solid fa-location-dot" style="color: var(--accent-cyan);"></i>
+          <span id="active-location-text">Scanning safe places around: <strong>Bengaluru Central (12.9716, 77.5946)</strong></span>
+        </div>
+        <div style="font-size: 0.775rem; color: var(--accent-cyan); display: flex; align-items: center; gap: 0.35rem;">
+          <i class="fa-solid fa-hand-pointer"></i> <span>Click anywhere on the map to search that area!</span>
+        </div>
       </div>
     </div>
 
     <!-- Filter Buttons Bar -->
     <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.5rem;">
-      <button class="btn btn-sm btn-secondary filter-place-btn active" data-type="all">All Locations</button>
+      <button class="btn btn-sm btn-secondary filter-place-btn active" data-type="all">All Safe Places (<span id="count-all">0</span>)</button>
       <button class="btn btn-sm btn-secondary filter-place-btn" data-type="police"><i class="fa-solid fa-shield-halved" style="color: #3b82f6;"></i> Police Stations</button>
       <button class="btn btn-sm btn-secondary filter-place-btn" data-type="hospital"><i class="fa-solid fa-hospital" style="color: #ef4444;"></i> 24/7 Hospitals</button>
       <button class="btn btn-sm btn-secondary filter-place-btn" data-type="women_help"><i class="fa-solid fa-person-shelter" style="color: #ec4899;"></i> Women Safety Booths</button>
+      <button class="btn btn-sm btn-secondary filter-place-btn" data-type="pharmacy"><i class="fa-solid fa-briefcase-medical" style="color: #10b981;"></i> 24/7 Pharmacies</button>
       <button class="btn btn-sm btn-secondary filter-place-btn" data-type="fire_station"><i class="fa-solid fa-fire-extinguisher" style="color: #f97316;"></i> Fire Stations</button>
-      <button class="btn btn-sm btn-secondary filter-place-btn" data-type="emergency_kiosk"><i class="fa-solid fa-phone-volume" style="color: #10b981;"></i> Transit Kiosks</button>
     </div>
 
     <!-- Map & Places List Grid -->
@@ -70,7 +118,7 @@
       
       <!-- Interactive Leaflet Map -->
       <div class="map-wrapper" style="position: sticky; top: calc(var(--header-height) + 1rem);">
-        <div id="places-map" class="map-element" style="height: 520px;"></div>
+        <div id="places-map" class="map-element" style="height: 540px;"></div>
       </div>
 
       <!-- Places List -->

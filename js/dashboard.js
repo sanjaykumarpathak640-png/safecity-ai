@@ -6,79 +6,221 @@ let officerMap = null;
 let officerMarkers = [];
 let categoryChart = null;
 
+let citizenActiveTab = 'my';
+let myComplaintsCache = [];
+let allComplaintsCache = [];
+
 // Initialize Citizen Dashboard
 async function initCitizenDashboard() {
   await Auth.init();
-  if (!Auth.requireAuth()) return;
 
-  loadCitizenStatsAndReports();
+  const noticeBanner = document.getElementById('guest-notice-banner');
+  if (noticeBanner) {
+    noticeBanner.style.display = Auth.isAuthenticated ? 'none' : 'flex';
+  }
+
+  // Setup tab buttons
+  const tabMy = document.getElementById('tab-btn-my');
+  const tabAll = document.getElementById('tab-btn-all');
+  const btnRefresh = document.getElementById('btn-refresh-dashboard');
+
+  if (tabMy) {
+    tabMy.addEventListener('click', () => {
+      citizenActiveTab = 'my';
+      tabMy.classList.remove('btn-secondary');
+      tabMy.classList.add('btn-primary');
+      if (tabAll) {
+        tabAll.classList.remove('btn-primary');
+        tabAll.classList.add('btn-secondary');
+      }
+      renderCitizenTable();
+    });
+  }
+
+  if (tabAll) {
+    tabAll.addEventListener('click', () => {
+      citizenActiveTab = 'all';
+      tabAll.classList.remove('btn-secondary');
+      tabAll.classList.add('btn-primary');
+      if (tabMy) {
+        tabMy.classList.remove('btn-primary');
+        tabMy.classList.add('btn-secondary');
+      }
+      renderCitizenTable();
+    });
+  }
+
+  if (btnRefresh) {
+    btnRefresh.addEventListener('click', async () => {
+      btnRefresh.disabled = true;
+      btnRefresh.innerHTML = '<span class="spinner" style="width:12px; height:12px;"></span> Syncing...';
+      await loadCitizenStatsAndReports();
+      btnRefresh.disabled = false;
+      btnRefresh.innerHTML = '<i class="fa-solid fa-rotate"></i> Refresh';
+      SafeCity.showToast('Dashboard feed refreshed.', 'success');
+    });
+  }
+
+  await loadCitizenStatsAndReports();
 }
 
 async function loadCitizenStatsAndReports() {
   const tableBody = document.getElementById('citizen-complaints-tbody');
-  const emptyState = document.getElementById('citizen-empty-state');
+
+  // 1. Load LocalStorage submissions
+  let localMy = [];
+  let localAll = [];
+  try {
+    localMy = JSON.parse(localStorage.getItem('safecity_my_complaints') || '[]');
+  } catch (e) { localMy = []; }
+  try {
+    localAll = JSON.parse(localStorage.getItem('safecity_complaints') || '[]');
+  } catch (e) { localAll = []; }
+
+  // 2. Fetch server records
+  let serverMy = [];
+  let serverAll = [];
 
   try {
-    const res = await API.get('php/get_complaints.php', { user_only: 1, limit: 50 });
-    const complaints = res.data.complaints;
-
-    let pendingCount = 0;
-    let inProgressCount = 0;
-    let fixedCount = 0;
-
-    complaints.forEach(c => {
-      if (c.status === 'pending') pendingCount++;
-      else if (c.status === 'in_progress') inProgressCount++;
-      else if (c.status === 'fixed') fixedCount++;
-    });
-
-    const elTotal = document.getElementById('stat-user-total');
-    const elPending = document.getElementById('stat-user-pending');
-    const elProgress = document.getElementById('stat-user-progress');
-    const elFixed = document.getElementById('stat-user-fixed');
-
-    if (elTotal) elTotal.textContent = complaints.length;
-    if (elPending) elPending.textContent = pendingCount;
-    if (elProgress) elProgress.textContent = inProgressCount;
-    if (elFixed) elFixed.textContent = fixedCount;
-
-    if (complaints.length === 0) {
-      if (emptyState) emptyState.style.display = 'block';
-      if (tableBody) tableBody.innerHTML = '';
-      return;
+    const resMy = await API.get('php/get_complaints.php', { user_only: 1, limit: 50 });
+    if (resMy && resMy.data && Array.isArray(resMy.data.complaints)) {
+      serverMy = resMy.data.complaints;
     }
-
-    if (emptyState) emptyState.style.display = 'none';
-
-    let rowsHtml = '';
-    complaints.forEach(c => {
-      rowsHtml += `
-        <tr>
-          <td><strong style="font-family: var(--font-mono); color: var(--accent-cyan);">${c.complaint_code}</strong></td>
-          <td>${SafeCity.getCategoryLabel(c.category)}</td>
-          <td>
-            <div style="font-weight: 600; max-width: 280px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-              ${SafeCity.escape(c.title)}
-            </div>
-            <div style="font-size: 0.775rem; color: var(--text-muted);">${SafeCity.escape(c.address || '')}</div>
-          </td>
-          <td>${SafeCity.getPriorityBadge(c.priority_level)}</td>
-          <td>${SafeCity.getStatusBadge(c.status)}</td>
-          <td style="font-size: 0.825rem; color: var(--text-muted);">${SafeCity.formatDate(c.created_at)}</td>
-          <td>
-            <a href="track.html?code=${c.complaint_code}" class="btn btn-sm btn-outline">
-              <i class="fa-solid fa-eye"></i> Track
-            </a>
-          </td>
-        </tr>
-      `;
-    });
-
-    if (tableBody) tableBody.innerHTML = rowsHtml;
-
-  } catch (err) {
-    SafeCity.showToast('Failed to load personal complaints: ' + err.message, 'error');
+  } catch (e) {
+    console.log('Server my complaints note:', e.message);
   }
+
+  try {
+    const resAll = await API.get('php/get_complaints.php', { limit: 100 });
+    if (resAll && resAll.data && Array.isArray(resAll.data.complaints)) {
+      serverAll = resAll.data.complaints;
+    }
+  } catch (e) {
+    console.log('Server all complaints note:', e.message);
+  }
+
+  // Deduplicate helper
+  function mergeAndDedupe(localArr, serverArr) {
+    const seen = new Set();
+    const result = [];
+    // Prioritize newest local
+    [...localArr, ...serverArr].forEach(c => {
+      const code = c.complaint_code || `id-${c.id}`;
+      if (!seen.has(code)) {
+        seen.add(code);
+        result.push(c);
+      }
+    });
+    return result;
+  }
+
+  myComplaintsCache = mergeAndDedupe(localMy, serverMy);
+  allComplaintsCache = mergeAndDedupe(localAll, serverAll);
+
+  // If user has no personal reports yet but we have local, or vice versa
+  const badgeMy = document.getElementById('badge-my-count');
+  const badgeAll = document.getElementById('badge-all-count');
+  if (badgeMy) badgeMy.textContent = myComplaintsCache.length;
+  if (badgeAll) badgeAll.textContent = allComplaintsCache.length;
+
+  // Compute personal stats
+  let pendingCount = 0;
+  let inProgressCount = 0;
+  let fixedCount = 0;
+
+  myComplaintsCache.forEach(c => {
+    if (c.status === 'pending') pendingCount++;
+    else if (c.status === 'in_progress') inProgressCount++;
+    else if (c.status === 'fixed') fixedCount++;
+  });
+
+  const elTotal = document.getElementById('stat-user-total');
+  const elPending = document.getElementById('stat-user-pending');
+  const elProgress = document.getElementById('stat-user-progress');
+  const elFixed = document.getElementById('stat-user-fixed');
+
+  if (elTotal) elTotal.textContent = myComplaintsCache.length;
+  if (elPending) elPending.textContent = pendingCount;
+  if (elProgress) elProgress.textContent = inProgressCount;
+  if (elFixed) elFixed.textContent = fixedCount;
+
+  // Auto-switch to 'all' if user has 0 personal reports to immediately show active data
+  if (myComplaintsCache.length === 0 && allComplaintsCache.length > 0 && citizenActiveTab === 'my') {
+    const tabAll = document.getElementById('tab-btn-all');
+    const tabMy = document.getElementById('tab-btn-my');
+    if (tabAll && tabMy) {
+      citizenActiveTab = 'all';
+      tabAll.classList.remove('btn-secondary');
+      tabAll.classList.add('btn-primary');
+      tabMy.classList.remove('btn-primary');
+      tabMy.classList.add('btn-secondary');
+    }
+  }
+
+  renderCitizenTable();
+}
+
+function renderCitizenTable() {
+  const tableBody = document.getElementById('citizen-complaints-tbody');
+  const emptyState = document.getElementById('citizen-empty-state');
+  if (!tableBody) return;
+
+  const list = (citizenActiveTab === 'my') ? myComplaintsCache : allComplaintsCache;
+
+  if (list.length === 0) {
+    if (emptyState) emptyState.style.display = 'block';
+    tableBody.innerHTML = '';
+    return;
+  }
+
+  if (emptyState) emptyState.style.display = 'none';
+
+  let rowsHtml = '';
+  list.forEach(c => {
+    const safeCode = SafeCity.escape(c.complaint_code || 'SC-DEMO');
+    const safeTitle = SafeCity.escape(c.title || 'Civic Incident');
+    const safeAddr = SafeCity.escape(c.address || 'Reported Location');
+    const categoryLabel = SafeCity.getCategoryLabel(c.category || 'other');
+    const statusBadge = SafeCity.getStatusBadge(c.status || 'pending');
+    const priorityBadge = SafeCity.getPriorityBadge(c.priority_level || 'Medium');
+    const dateFormatted = SafeCity.formatDate(c.created_at);
+
+    rowsHtml += `
+      <tr>
+        <td>
+          <a href="track.html?code=${safeCode}" style="font-family: var(--font-mono); font-weight:700; color: var(--accent-cyan); text-decoration: underline;">
+            ${safeCode}
+          </a>
+        </td>
+        <td>${categoryLabel}</td>
+        <td>
+          <div style="font-weight: 600; max-width: 280px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${safeTitle}">
+            ${safeTitle}
+          </div>
+          <div style="font-size: 0.775rem; color: var(--text-muted); max-width: 280px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+            <i class="fa-solid fa-location-dot"></i> ${safeAddr}
+          </div>
+        </td>
+        <td>${priorityBadge}</td>
+        <td>${statusBadge}</td>
+        <td style="font-size: 0.825rem; color: var(--text-muted);">${dateFormatted}</td>
+        <td>
+          <div style="display: flex; gap: 0.35rem;">
+            <a href="track.html?code=${safeCode}" class="btn btn-sm btn-outline" style="padding: 0.2rem 0.5rem; font-size: 0.75rem;" title="Track Live">
+              <i class="fa-solid fa-magnifying-glass"></i> Track
+            </a>
+            ${c.latitude && c.longitude ? `
+              <a href="heatmap.html?lat=${c.latitude}&lng=${c.longitude}" class="btn btn-sm btn-secondary" style="padding: 0.2rem 0.5rem; font-size: 0.75rem;" title="View on Map">
+                <i class="fa-solid fa-map-pin"></i>
+              </a>
+            ` : ''}
+          </div>
+        </td>
+      </tr>
+    `;
+  });
+
+  tableBody.innerHTML = rowsHtml;
 }
 
 // Initialize Officer Dashboard

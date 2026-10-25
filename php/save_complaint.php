@@ -13,8 +13,9 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     jsonError('Method not allowed. Use POST.', 405);
 }
 
-// User must be authenticated
-$currentUser = requireAuth();
+// Optional user authentication - allow citizens to report with or without prior login
+$currentUser = getCurrentUser();
+$userId = $currentUser ? (int)$currentUser['id'] : null;
 
 $category    = cleanInput($_POST['category'] ?? '');
 $title       = cleanInput($_POST['title'] ?? '');
@@ -124,7 +125,7 @@ try {
     $insertStmt = $db->prepare($insertSql);
     $insertStmt->execute([
         $complaintCode,
-        $currentUser['id'],
+        $userId,
         $category,
         $title,
         $description,
@@ -146,14 +147,16 @@ try {
     $histStmt = $db->prepare('INSERT INTO complaint_status_history (complaint_id, changed_by_user_id, from_status, to_status, note, is_public) VALUES (?, ?, ?, ?, ?, ?)');
     $histStmt->execute([
         $complaintId,
-        $currentUser['id'],
+        $userId,
         'submitted',
         'pending',
         'Complaint filed by citizen. Severity assessed and priority generated.',
         1
     ]);
 
-    logAudit($currentUser['id'], 'SUBMIT_COMPLAINT', 'complaints', $complaintId, "Complaint $complaintCode filed with priority {$priorityData['score']}");
+    if ($userId) {
+        logAudit($userId, 'SUBMIT_COMPLAINT', 'complaints', $complaintId, "Complaint $complaintCode filed with priority {$priorityData['score']}");
+    }
 
     jsonResponse([
         'complaint_id'   => $complaintId,

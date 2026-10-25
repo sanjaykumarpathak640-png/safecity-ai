@@ -25,7 +25,14 @@ try {
 
     if ($userOnly) {
         if (!$currentUser) {
-            jsonError('Sign in required to view your personal complaints.', 401);
+            // Gracefully return empty list if not logged in (client merges with localStorage)
+            jsonResponse([
+                'total' => 0,
+                'complaints' => [],
+                'limit' => $limit,
+                'offset' => $offset
+            ]);
+            exit;
         }
         $where[] = 'c.user_id = ?';
         $params[] = $currentUser['id'];

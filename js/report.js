@@ -340,14 +340,6 @@ function initFormSubmit() {
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    if (!Auth.isAuthenticated) {
-      SafeCity.showToast('Please sign in before submitting a civic complaint.', 'warning');
-      setTimeout(() => {
-        window.location.href = 'login.html?redirect=report.html';
-      }, 1200);
-      return;
-    }
-
     const submitBtn = document.getElementById('btn-submit-complaint');
     submitBtn.disabled = true;
     submitBtn.innerHTML = '<span class="spinner" style="width:16px; height:16px;"></span> Registering Complaint...';
@@ -357,6 +349,50 @@ function initFormSubmit() {
     try {
       const res = await API.post('php/save_complaint.php', formData);
       const data = res.data;
+
+      // Extract field values for instant client-side dashboard sync
+      const catVal = form.elements['category']?.value || 'other';
+      const titleVal = form.elements['title']?.value || 'Civic Issue';
+      const descVal = form.elements['description']?.value || '';
+      const latVal = parseFloat(form.elements['latitude']?.value || '12.9738');
+      const lngVal = parseFloat(form.elements['longitude']?.value || '77.6055');
+      const addrVal = form.elements['address']?.value || 'Reported Location';
+      const sevVal = parseInt(form.elements['severity']?.value || '3', 10);
+
+      const newRecord = {
+        id: data.complaint_id || Date.now(),
+        complaint_code: data.complaint_code,
+        category: catVal,
+        title: titleVal,
+        description: descVal,
+        latitude: latVal,
+        longitude: lngVal,
+        address: addrVal,
+        severity: sevVal,
+        priority_score: data.priority_score || (sevVal * 18),
+        priority_level: data.priority_level || (sevVal >= 4 ? 'High' : (sevVal === 3 ? 'Medium' : 'Low')),
+        status: 'pending',
+        department: data.department || 'Roads & Infrastructure',
+        created_at: new Date().toISOString()
+      };
+
+      // 1. Mirror into safecity_my_complaints (for Citizen Dashboard)
+      try {
+        const myComplaints = JSON.parse(localStorage.getItem('safecity_my_complaints') || '[]');
+        myComplaints.unshift(newRecord);
+        localStorage.setItem('safecity_my_complaints', JSON.stringify(myComplaints));
+      } catch (err) {
+        console.warn('Local storage mirror error:', err);
+      }
+
+      // 2. Mirror into safecity_complaints (for Heatmap and Officer feeds)
+      try {
+        const allComplaints = JSON.parse(localStorage.getItem('safecity_complaints') || '[]');
+        allComplaints.unshift(newRecord);
+        localStorage.setItem('safecity_complaints', JSON.stringify(allComplaints));
+      } catch (err) {
+        console.warn('Local storage all complaints error:', err);
+      }
 
       // Render success screen with tracking link
       const container = document.getElementById('report-container');
@@ -377,18 +413,18 @@ function initFormSubmit() {
               </div>
               <div style="display: flex; justify-content: center; gap: 0.5rem; margin-top: 0.5rem;">
                 <span class="badge badge-pending">Status: Pending</span>
-                <span class="badge badge-medium">Priority: ${data.priority_score}/100</span>
+                <span class="badge badge-medium">Priority: ${data.priority_score || 55}/100</span>
               </div>
             </div>
             <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
-              <a href="track.html?code=${data.complaint_code}" class="btn btn-primary btn-lg">
-                <i class="fa-solid fa-magnifying-glass-location"></i> Track Complaint Status
+              <a href="dashboard.html" class="btn btn-primary btn-lg">
+                <i class="fa-solid fa-gauge"></i> View on My Dashboard
               </a>
-              <a href="report.html" class="btn btn-secondary btn-lg">
+              <a href="track.html?code=${data.complaint_code}" class="btn btn-secondary btn-lg">
+                <i class="fa-solid fa-magnifying-glass-location"></i> Track Status
+              </a>
+              <a href="report.html" class="btn btn-outline btn-lg">
                 <i class="fa-solid fa-plus"></i> Report Another Issue
-              </a>
-              <a href="dashboard.html" class="btn btn-outline btn-lg">
-                <i class="fa-solid fa-gauge"></i> My Dashboard
               </a>
             </div>
           </div>
