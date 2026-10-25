@@ -55,13 +55,37 @@ const SafetyScore = {
 
   renderFactorBreakdown(containerId, factors) {
     const container = document.getElementById(containerId);
-    if (!container) return;
+    if (!container || !factors) return;
+
+    const factorNames = {
+      lighting: 'Lighting Quality',
+      crowd: 'Crowd Activity',
+      incident_history: 'Incident-History Signal',
+      help_access: 'Proximity to Help Points',
+      time_factor: 'Time-Related Factor',
+      road_condition: 'Road Condition',
+      community_signal: 'Approved Community Reports'
+    };
+
+    const factorDescs = {
+      lighting: 'Real-time illumination fixtures and absence of active blackout reports.',
+      crowd: 'Pedestrian flow and commercial store presence.',
+      incident_history: 'Civic safety buffer and historical reports.',
+      help_access: 'Access to verified police stations and emergency hospitals.',
+      time_factor: 'Current hour safety variance (daylight vs night).',
+      road_condition: 'Pavement smoothness and absence of deep potholes.',
+      community_signal: 'Citizen star ratings and community feedback.'
+    };
 
     let html = '<div class="factors-grid" style="display: flex; flex-direction: column; gap: 0.85rem;">';
 
     for (const [key, item] of Object.entries(factors)) {
-      const score = item.score;
-      const weight = item.weight;
+      if (!item) continue;
+      const score = typeof item.score === 'number' ? item.score : 70;
+      const weight = item.weight || '15%';
+      const name = item.name || factorNames[key] || key;
+      const desc = item.desc || factorDescs[key] || 'Factor assessed by SafeCity AI engine.';
+
       let barColor = 'var(--color-safe)';
       if (score < 55) barColor = 'var(--color-danger)';
       else if (score < 75) barColor = 'var(--color-caution)';
@@ -70,7 +94,7 @@ const SafetyScore = {
         <div class="factor-row">
           <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.25rem;">
             <div style="font-size: 0.875rem; font-weight: 600;">
-              ${item.name}
+              ${name}
               <span style="font-size: 0.725rem; color: var(--text-muted); font-weight: 500; margin-left: 0.25rem;">(${weight} weight)</span>
             </div>
             <div style="font-family: var(--font-mono); font-size: 0.9rem; font-weight: 700; color: ${barColor};">
@@ -81,7 +105,7 @@ const SafetyScore = {
             <div style="width: ${Math.min(100, Math.max(0, score))}%; height: 100%; background: ${barColor}; border-radius: var(--radius-full); transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);"></div>
           </div>
           <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.2rem;">
-            ${item.desc}
+            ${desc}
           </div>
         </div>
       `;

@@ -10,6 +10,19 @@ let citizenActiveTab = 'my';
 let myComplaintsCache = [];
 let allComplaintsCache = [];
 
+function safeEscape(str) {
+  if (typeof SafeCity !== 'undefined' && typeof SafeCity.escape === 'function') {
+    return SafeCity.escape(str);
+  }
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
 // Initialize Citizen Dashboard
 async function initCitizenDashboard() {
   await Auth.init();
@@ -177,9 +190,9 @@ function renderCitizenTable() {
 
   let rowsHtml = '';
   list.forEach(c => {
-    const safeCode = SafeCity.escape(c.complaint_code || 'SC-DEMO');
-    const safeTitle = SafeCity.escape(c.title || 'Civic Incident');
-    const safeAddr = SafeCity.escape(c.address || 'Reported Location');
+    const safeCode = safeEscape(c.complaint_code || 'SC-DEMO');
+    const safeTitle = safeEscape(c.title || 'Civic Incident');
+    const safeAddr = safeEscape(c.address || 'Reported Location');
     const categoryLabel = SafeCity.getCategoryLabel(c.category || 'other');
     const statusBadge = SafeCity.getStatusBadge(c.status || 'pending');
     const priorityBadge = SafeCity.getPriorityBadge(c.priority_level || 'Medium');
@@ -344,7 +357,7 @@ async function loadOfficerComplaints() {
           .addTo(officerMap)
           .bindPopup(`
             <div style="font-family: var(--font-sans); font-size: 13px; color: #0a0f1d;">
-              <strong>${SafeCity.escape(c.title)}</strong><br>
+              <strong>${safeEscape(c.title)}</strong><br>
               ID: ${c.complaint_code} &bull; ${c.status}<br>
               <button onclick="openOfficerModal(${c.id})" style="margin-top: 6px; padding: 4px 8px; background: #06b6d4; color: #fff; border: none; border-radius: 4px; cursor: pointer;">
                 Inspect & Update
@@ -360,9 +373,9 @@ async function loadOfficerComplaints() {
           <td>${SafeCity.getCategoryLabel(c.category)}</td>
           <td>
             <div style="font-weight: 600; max-width: 240px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-              ${SafeCity.escape(c.title)}
+              ${safeEscape(c.title)}
             </div>
-            <div style="font-size: 0.75rem; color: var(--text-muted);">${SafeCity.escape(c.address || '')}</div>
+            <div style="font-size: 0.75rem; color: var(--text-muted);">${safeEscape(c.address || '')}</div>
           </td>
           <td>
             <span class="badge ${c.severity >= 4 ? 'badge-critical' : 'badge-low'}">
